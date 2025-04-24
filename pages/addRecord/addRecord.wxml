@@ -1,0 +1,46 @@
+<!--pages/addRecord/addRecord.wxml-->
+<view class="container">
+  <!-- 宠物信息 -->
+  <view class="pet-info" wx:if="{{petInfo}}">
+    <view class="pet-name">{{petInfo.name}}</view>
+    <view class="pet-breed">{{petInfo.breed}}</view>
+    <view class="pet-status {{petInfo.status === '住院' ? 'status-hospitalized' : 'status-postop'}}">
+      {{petInfo.status || '术后'}}
+    </view>
+  </view>
+  
+  <!-- 记录表单 -->
+  <view class="record-form">
+    <view class="form-item">
+      <textarea class="content-textarea" 
+                placeholder="请输入宠物状态记录内容..." 
+                bindinput="inputContent"
+                value="{{newRecord.content}}"
+                maxlength="500"></textarea>
+      <view class="textarea-counter">{{newRecord.content.length}}/500</view>
+    </view>
+    
+    <!-- 图片上传 -->
+    <view class="form-item">
+      <view class="upload-title">添加图片（最多9张）</view>
+      <view class="image-list">
+        <!-- 已上传图片 -->
+        <view class="image-item" wx:for="{{newRecord.images}}" wx:key="index">
+          <image src="{{item}}" mode="aspectFill" bindtap="previewImage" data-src="{{item}}"></image>
+          <view class="delete-btn" bindtap="deleteImage" data-index="{{index}}">×</view>
+        </view>
+        
+        <!-- 添加图片按钮 -->
+        <view class="image-item add-image" bindtap="chooseImage" wx:if="{{newRecord.images.length < 9}}">
+          <view class="add-icon">+</view>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 提交按钮 -->
+  <view class="form-actions">
+    <button class="btn-cancel" bindtap="navigateBack">取消</button>
+    <button class="btn-submit" bindtap="submitRecord" loading="{{loading}}">提交</button>
+  </view>
+</view>

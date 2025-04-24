@@ -1,0 +1,12 @@
+<!--pages/petList/petList.wxml-->
+<view class="container">
+  <view class="pet-list">
+    <view wx:for="{{pets}}" wx:key="id" class="pet-item" bindtap="goToPetDetail" data-id="{{item.id}}">
+      <view class="pet-info">
+        <text class="pet-name">{{item.name}}</text>
+        <text class="pet-status">{{item.status}}</text>
+      </view>
+      <text class="pet-date">{{item.createdAt}}</text>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,43 @@
+/**app.wxss**/
+/* 定义全局色彩变量 - 使用低饱和度宠物风格暖色系 */
+page {
+  --primary-color: #D4B59E; /* 主色调：淡棕色 */
+  --secondary-color: #8B5A2B; /* 深色调：暗棕色 */
+  --accent-color: #A67C52; /* 强调色：浅棕色 */
+  --light-color: #F0E0D6; /* 浅色调：淡粉棕色 */
+  --background-color: #FFF9F5; /* 背景色：淡暖色 */
+  --text-color: #5A3825; /* 文字颜色：深棕色 */
+  --text-light-color: #A67C52; /* 浅色文字：浅棕色 */
+  --border-color: #D4B59E; /* 边框色：淡棕色 */
+  --shadow-color: rgba(212, 181, 158, 0.2); /* 阴影色 */
+  --success-color: #7AA874; /* 成功提示色：淡绿色 */
+  --warning-color: #F4CE14; /* 警告提示色：淡黄色 */
+  --error-color: #E76161; /* 错误提示色：淡红色 */
+  
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-size: 28rpx;
+}
+
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40rpx 30rpx;
+  box-sizing: border-box;
+}
+
+/* 全局按钮样式 */
+.btn {
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: 12rpx;
+  font-size: 30rpx;
+  padding: 20rpx 0;
+  text-align: center;
+  box-shadow: 0 4rpx 12rpx var(--shadow-color);
+  padding: 10rpx 20rpx;
+  border-radius: 10rpx;
+  font-size: 28rpx;
+}

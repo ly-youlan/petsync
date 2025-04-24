@@ -1,0 +1,62 @@
+<!--pages/login/login.wxml-->
+<view class="container">
+  <view class="logo">
+    <!-- 这里可以放置你的logo -->
+    <image src="/path/to/your/logo.png" mode="aspectFit"></image>
+  </view>
+  <view class="title">宠物医院信息共享平台</view>
+  <view class="subtitle">连接兽医与宠物主的实时信息共享平台</view>
+  
+  <view class="login-form">
+    <button class="btn-wechat" open-type="getPhoneNumber" bindgetphonenumber="getPhoneNumber">
+      <image class="wechat-icon" src="/images/wechat-icon.png" mode="aspectFit"></image>
+      微信手机号一键登录
+    </button>
+    
+    <button class="btn-dev" bindtap="devLogin">
+      开发环境直接登录
+    </button>
+    
+    <view class="dev-tip">开发环境下微信手机号登录可能无法使用，请使用上方按钮</view>
+    
+    <view class="divider">
+      <view class="line"></view>
+      <view class="text">或</view>
+      <view class="line"></view>
+    </view>
+    
+    <input type="number" placeholder="请输入手机号" bindinput="inputPhoneNumber" />
+    <button class="btn-manual" bindtap="login">手动登录</button>
+    
+    <view class="tips">登录后需绑定医院信息，等待管理员审核</view>
+    
+    <!-- 开发工具入口 -->
+    <view class="dev-tools-entry" bindtap="goToDevTools">
+      <text>开发工具</text>
+    </view>
+  </view>
+  
+  <!-- 医院信息绑定弹窗 -->
+  <view class="modal-mask" wx:if="{{showHospitalModal}}">
+    <view class="modal-content">
+      <view class="modal-title">请绑定医院信息</view>
+      <view class="modal-form">
+        <input placeholder="医院名称" bindinput="inputHospitalName" />
+        <input placeholder="医院地址" bindinput="inputHospitalAddress" />
+        <input placeholder="兽医姓名" bindinput="inputVetName" />
+      </view>
+      <view class="modal-btns">
+        <button class="modal-btn modal-cancel" bindtap="closeHospitalModal">取消</button>
+        <button class="modal-btn modal-confirm" bindtap="submitHospitalInfo">提交</button>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 加载中提示 -->
+  <view class="loading-mask" wx:if="{{isLoading}}">
+    <view class="loading-content">
+      <view class="loading-icon"></view>
+      <view class="loading-text">加载中...</view>
+    </view>
+  </view>
+</view>

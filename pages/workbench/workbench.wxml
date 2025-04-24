@@ -1,0 +1,94 @@
+<!--pages/workbench/workbench.wxml-->
+<view class="container">
+  <!-- 已审核通过的工作台 -->
+  <block wx:if="{{isApproved}}">
+    <view class="hospital-info">
+      <view class="hospital-name">{{hospitalInfo.name}}</view>
+      <view class="vet-name">兽医：{{hospitalInfo.vetName}}</view>
+    </view>
+    
+    <view class="header">
+      <view class="filters">
+        <view wx:for="{{filters}}" wx:key="index" 
+              class="filter {{item === currentFilter ? 'active' : ''}}"
+              bindtap="changeFilter" data-filter="{{item}}">
+          {{item}}
+        </view>
+      </view>
+      <view class="search-box">
+        <input type="text" placeholder="搜索宠物名称/主人手机号" bindinput="search" />
+        <view class="search-icon">
+          <image src="/images/search-icon.png" mode="aspectFit"></image>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 创建新宠物记录按钮 -->
+    <view class="create-btn" bindtap="goToCreatePetRecord">
+      <image src="/images/add-icon.png" mode="aspectFit"></image>
+      <text>创建新宠物记录</text>
+    </view>
+    
+    <!-- 宠物记录列表 -->
+    <view class="pet-records" wx:if="{{!loading && petRecords.length > 0}}">
+      <view class="pet-card" wx:for="{{petRecords}}" wx:key="_id" bindtap="goToPetDetail" data-id="{{item._id}}">
+        <view class="pet-image">
+          <image src="{{item.petInfo.avatar || '/images/default-pet.png'}}" mode="aspectFill"></image>
+        </view>
+        <view class="pet-info">
+          <view class="pet-name">{{item.petInfo.name}}</view>
+          <view class="pet-breed">{{item.petInfo.breed}}</view>
+          <view class="pet-status {{item.status === '住院' ? 'status-hospitalized' : 'status-postop'}}">
+            {{item.status}}
+          </view>
+          <view class="pet-time">{{item.createTime}}</view>
+        </view>
+        <view class="pet-owner">
+          <view class="owner-label">主人信息</view>
+          <view class="owner-phone">{{item.ownerInfo.phoneNumber}}</view>
+        </view>
+        <view class="arrow">
+          <image src="/images/arrow-right.png" mode="aspectFit"></image>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{!loading && petRecords.length === 0}}">
+      <image src="/images/empty-state.png" mode="aspectFit"></image>
+      <view class="empty-text">暂无宠物记录</view>
+      <view class="empty-subtext">点击上方按钮创建新的宠物记录</view>
+    </view>
+  </block>
+  
+  <!-- 待审核状态 -->
+  <block wx:elif="{{!loading && !isApproved && hospitalInfo}}">
+    <view class="pending-approval">
+      <image src="/images/pending-approval.png" mode="aspectFit"></image>
+      <view class="pending-title">审核中</view>
+      <view class="pending-text">您的医院绑定信息正在审核中</view>
+      <view class="hospital-card">
+        <view class="hospital-title">医院信息</view>
+        <view class="hospital-item">
+          <view class="item-label">医院名称：</view>
+          <view class="item-value">{{hospitalInfo.name}}</view>
+        </view>
+        <view class="hospital-item">
+          <view class="item-label">医院地址：</view>
+          <view class="item-value">{{hospitalInfo.address}}</view>
+        </view>
+        <view class="hospital-item">
+          <view class="item-label">兽医姓名：</view>
+          <view class="item-value">{{hospitalInfo.vetName}}</view>
+        </view>
+      </view>
+      <view class="pending-subtext">请耐心等待管理员审核，审核通过后即可使用平台功能</view>
+    </view>
+  </block>
+  
+  <!-- 加载中 -->
+  <view class="loading" wx:if="{{loading}}">
+    <view class="loading-icon"></view>
+    <view class="loading-text">加载中...</view>
+  </view>
+</view>

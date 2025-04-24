@@ -1,0 +1,234 @@
+/* pages/login/login.wxss */
+page {
+  background-color: #FFF9F5; /* 淡淡的暖色背景 */
+}
+
+.container {
+  padding: 80rpx 50rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo {
+  margin-bottom: 60rpx;
+  display: flex;
+  justify-content: center;
+}
+
+.logo image {
+  width: 180rpx;
+  height: 180rpx;
+  border-radius: 20rpx;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #8B5A2B; /* 暗棕色标题 */
+  margin-bottom: 20rpx;
+  text-align: center;
+}
+
+.subtitle {
+  font-size: 28rpx;
+  color: #A67C52; /* 浅棕色副标题 */
+  margin-bottom: 80rpx;
+  text-align: center;
+}
+
+.login-form {
+  width: 100%;
+}
+
+.login-form input {
+  background-color: #FFFFFF;
+  border: 1rpx solid #D4B59E; /* 软棕色边框 */
+  padding: 24rpx;
+  margin-bottom: 30rpx;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  color: #5A3825;
+  box-shadow: 0 2rpx 10rpx rgba(212, 181, 158, 0.1);
+}
+
+.btn-wechat {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #07C160; /* 微信绿 */
+  color: white;
+  padding: 24rpx;
+  border-radius: 12rpx;
+  margin-bottom: 20rpx;
+  font-size: 30rpx;
+  box-shadow: 0 4rpx 12rpx rgba(7, 193, 96, 0.2);
+}
+
+.btn-dev {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #4A90E2; /* 开发环境蓝色 */
+  color: white;
+  padding: 24rpx;
+  border-radius: 12rpx;
+  margin-bottom: 10rpx;
+  font-size: 30rpx;
+  box-shadow: 0 4rpx 12rpx rgba(74, 144, 226, 0.2);
+}
+
+.dev-tip {
+  font-size: 24rpx;
+  color: #999;
+  text-align: center;
+  margin-bottom: 20rpx;
+}
+
+.wechat-icon {
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: 16rpx;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 40rpx 0;
+}
+
+.divider .line {
+  flex: 1;
+  height: 1rpx;
+  background-color: #D4B59E;
+}
+
+.divider .text {
+  color: #A67C52;
+  padding: 0 20rpx;
+  font-size: 24rpx;
+}
+
+.btn-manual {
+  background-color: #D4B59E; /* 淡棕色按钮 */
+  color: white;
+  padding: 24rpx;
+  border-radius: 12rpx;
+  margin-bottom: 30rpx;
+  font-size: 30rpx;
+  box-shadow: 0 4rpx 12rpx rgba(212, 181, 158, 0.3);
+}
+
+.tips {
+  font-size: 24rpx;
+  color: #A67C52;
+  text-align: center;
+  margin-top: 30rpx;
+}
+
+/* 开发工具入口 */
+.dev-tools-entry {
+  margin-top: 40rpx;
+  padding: 16rpx 30rpx;
+  background-color: #f0f0f0;
+  border-radius: 30rpx;
+  display: inline-block;
+  font-size: 24rpx;
+  color: #666;
+  align-self: center;
+}
+
+/* 医院信息弹窗样式 */
+.modal-mask, .loading-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  width: 80%;
+  background: #FFF9F5;
+  border-radius: 16rpx;
+  padding: 40rpx 30rpx;
+  box-shadow: 0 8rpx 20rpx rgba(0, 0, 0, 0.1);
+}
+
+.modal-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #8B5A2B;
+  text-align: center;
+  margin-bottom: 30rpx;
+}
+
+.modal-form input {
+  background-color: #FFFFFF;
+  border: 1rpx solid #D4B59E;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+  border-radius: 10rpx;
+  font-size: 28rpx;
+}
+
+.modal-btns {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30rpx;
+}
+
+.modal-btn {
+  flex: 1;
+  margin: 0 10rpx;
+  padding: 20rpx 0;
+  text-align: center;
+  border-radius: 10rpx;
+  font-size: 28rpx;
+}
+
+.modal-cancel {
+  background-color: #F0E0D6;
+  color: #8B5A2B;
+}
+
+.modal-confirm {
+  background-color: #D4B59E;
+  color: white;
+}
+
+/* 加载中样式 */
+.loading-content {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 16rpx;
+  padding: 40rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 8rpx 20rpx rgba(0, 0, 0, 0.1);
+}
+
+.loading-icon {
+  width: 80rpx;
+  height: 80rpx;
+  border: 6rpx solid #D4B59E;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20rpx;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: #8B5A2B;
+}

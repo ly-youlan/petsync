@@ -1,0 +1,273 @@
+/* pages/petDetail/petDetail.wxss */
+.container {
+  padding: 30rpx;
+  background-color: #f8f8f8;
+  min-height: 100vh;
+}
+
+/* 加载中 */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300rpx;
+  width: 100%;
+}
+
+.loading-icon {
+  width: 80rpx;
+  height: 80rpx;
+  border: 6rpx solid #f3f3f3;
+  border-top: 6rpx solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  margin-top: 20rpx;
+  font-size: 28rpx;
+  color: #999;
+}
+
+/* 宠物信息头部 */
+.pet-header {
+  display: flex;
+  background-color: white;
+  padding: 30rpx;
+  border-radius: 16rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.05);
+}
+
+.pet-avatar {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 16rpx;
+  overflow: hidden;
+  margin-right: 30rpx;
+  background-color: #f0f0f0;
+}
+
+.pet-avatar image {
+  width: 100%;
+  height: 100%;
+}
+
+.pet-info {
+  flex: 1;
+}
+
+.pet-name {
+  font-size: 40rpx;
+  font-weight: bold;
+  margin-bottom: 16rpx;
+  color: #333;
+}
+
+.pet-breed {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 12rpx;
+}
+
+.pet-status {
+  display: inline-block;
+  font-size: 24rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 20rpx;
+  margin-bottom: 12rpx;
+}
+
+.status-hospitalized {
+  background-color: #e6f7ff;
+  color: #1890ff;
+}
+
+.status-postop {
+  background-color: #f6ffed;
+  color: #52c41a;
+}
+
+.pet-reason, .pet-time {
+  font-size: 26rpx;
+  color: #666;
+  margin-bottom: 8rpx;
+}
+
+/* 主人信息 */
+.owner-info {
+  background-color: white;
+  padding: 30rpx;
+  border-radius: 16rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.05);
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+  color: #333;
+}
+
+.owner-content {
+  padding: 10rpx 0;
+}
+
+.owner-item {
+  display: flex;
+  margin-bottom: 16rpx;
+}
+
+.item-label {
+  font-size: 28rpx;
+  color: #666;
+  width: 140rpx;
+}
+
+.item-value {
+  font-size: 28rpx;
+  color: #333;
+  flex: 1;
+}
+
+/* 操作按钮 */
+.action-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30rpx;
+}
+
+.btn-add, .btn-share {
+  flex: 1;
+  margin: 0 10rpx;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  border-radius: 12rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.1);
+}
+
+.btn-add {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-share {
+  background-color: white;
+  color: var(--primary-color);
+  border: 1rpx solid var(--primary-color);
+}
+
+.action-buttons image {
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 10rpx;
+}
+
+/* 记录列表 */
+.record-list {
+  width: 100%;
+}
+
+.record-item {
+  background-color: white;
+  margin-bottom: 20rpx;
+  padding: 30rpx;
+  border-radius: 16rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.05);
+}
+
+.record-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+  padding-bottom: 16rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.record-time {
+  font-size: 26rpx;
+  color: #999;
+}
+
+.record-actions {
+  display: flex;
+}
+
+.btn-icon {
+  width: 60rpx;
+  height: 60rpx;
+  padding: 0;
+  margin-left: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+}
+
+.btn-icon::after {
+  border: none;
+}
+
+.btn-icon image {
+  width: 36rpx;
+  height: 36rpx;
+}
+
+.record-content {
+  font-size: 28rpx;
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.record-images {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 20rpx;
+}
+
+.record-image {
+  width: 210rpx;
+  height: 210rpx;
+  margin-right: 15rpx;
+  margin-bottom: 15rpx;
+  border-radius: 8rpx;
+  background-color: #f0f0f0;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60rpx 0;
+}
+
+.empty-state image {
+  width: 200rpx;
+  height: 200rpx;
+  margin-bottom: 30rpx;
+}
+
+.empty-text {
+  font-size: 32rpx;
+  color: #333;
+  margin-bottom: 16rpx;
+}
+
+.empty-subtext {
+  font-size: 26rpx;
+  color: #999;
+}

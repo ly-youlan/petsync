@@ -1,0 +1,30 @@
+/* pages/petList/petList.wxss */
+.container {
+  padding: 40rpx;
+}
+.pet-list {
+  width: 100%;
+}
+.pet-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx;
+  border-bottom: 1rpx solid #e0e0e0;
+}
+.pet-info {
+  display: flex;
+  flex-direction: column;
+}
+.pet-name {
+  font-size: 32rpx;
+  font-weight: bold;
+}
+.pet-status {
+  font-size: 28rpx;
+  color: var(--primary-color);
+}
+.pet-date {
+  font-size: 24rpx;
+  color: #888888;
+}

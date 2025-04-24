@@ -1,0 +1,44 @@
+/* pages/createPetRecord/createPetRecord.wxss */
+.container {
+  padding: 40rpx;
+}
+.section {
+  margin-bottom: 40rpx;
+}
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+}
+input, textarea {
+  border: 1rpx solid var(--primary-color);
+  padding: 10rpx;
+  margin-bottom: 20rpx;
+  border-radius: 10rpx;
+}
+textarea {
+  height: 200rpx;
+}
+.image-uploader {
+  display: flex;
+  flex-wrap: wrap;
+}
+.upload-btn {
+  width: 150rpx;
+  height: 150rpx;
+  background-color: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 60rpx;
+  color: #888888;
+}
+.image-uploader image {
+  width: 150rpx;
+  height: 150rpx;
+  margin-right: 10rpx;
+  margin-bottom: 10rpx;
+}
+.btn {
+  width: 100%;
+}

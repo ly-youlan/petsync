@@ -1,0 +1,19 @@
+<!--pages/createPetRecord/createPetRecord.wxml-->
+<view class="container">
+  <view class="section">
+    <text class="section-title">宠物基础信息</text>
+    <input placeholder="宠物名称" bindinput="inputPetInfo" data-field="name" />
+    <input placeholder="品种" bindinput="inputPetInfo" data-field="breed" />
+    <input placeholder="入院原因" bindinput="inputPetInfo" data-field="reason" />
+    <input placeholder="手术类型（选填）" bindinput="inputPetInfo" data-field="surgeryType" />
+  </view>
+  <view class="section">
+    <text class="section-title">发布动态</text>
+    <textarea placeholder="请输入记录内容" bindinput="inputRecordContent"></textarea>
+    <view class="image-uploader">
+      <view class="upload-btn" bindtap="chooseImage">+</view>
+      <image wx:for="{{tempFilePaths}}" wx:key="index" src="{{item}}" mode="aspectFill"></image>
+    </view>
+  </view>
+  <button class="btn" bindtap="submitPetRecord">提交</button>
+</view>
