@@ -3,7 +3,8 @@ Page({
   data: {
     pet: null,
     records: [],
-    loading: true
+    loading: true,
+    refreshing: false
   },
   onLoad: function (options) {
     console.log('加载宠物详情，宠物ID:', options.id);
@@ -11,9 +12,26 @@ Page({
     this.loadPetDetail();
   },
   
+  // 页面显示时触发，用于从添加记录页面返回时刷新
+  onShow: function() {
+    // 如果是从添加记录页面返回，则刷新数据
+    if (this.needRefresh) {
+      this.loadPetDetail();
+      this.needRefresh = false;
+    }
+  },
+  
+  // 启用页面下拉刷新
+  onPullDownRefresh: function() {
+    this.setData({ refreshing: true });
+    this.loadPetDetail();
+  },
+  
   // 加载宠物详情
   loadPetDetail: function() {
-    this.setData({ loading: true });
+    if (!this.data.refreshing) {
+      this.setData({ loading: true });
+    }
     
     // 使用本地存储模拟数据库操作
     const app = getApp();
@@ -21,12 +39,21 @@ Page({
     
     // 从本地存储中获取宠物记录
     const petRecords = wx.getStorageSync('petRecords_' + openid) || [];
+    console.log('获取到的宠物记录列表:', petRecords);
+    console.log('当前宠物ID:', this.petId);
     
     // 查找对应ID的宠物记录
     const petRecord = petRecords.find(record => record._id === this.petId);
     
     if (petRecord) {
       console.log('找到宠物记录:', petRecord);
+      
+      // 检查是否有updates字段
+      if (petRecord.updates) {
+        console.log('状态记录数量:', petRecord.updates.length);
+      } else {
+        console.log('没有状态记录');
+      }
       
       // 将宠物记录转换为页面所需格式
       this.setData({
@@ -47,8 +74,12 @@ Page({
           images: update.images || [],
           createdAt: update.createTime
         })) : [],
-        loading: false
+        loading: false,
+        refreshing: false
       });
+      
+      // 如果是下拉刷新，停止下拉动画
+      wx.stopPullDownRefresh();
     } else {
       console.log('未找到宠物记录');
       wx.showToast({
@@ -74,8 +105,12 @@ Page({
           { id: 1, content: '小花今天进行了手术', images: [], createdAt: '2025-04-22 10:30:00' },
           { id: 2, content: '手术完成，恢复良好', images: [], createdAt: '2025-04-22 14:00:00' },
         ],
-        loading: false
+        loading: false,
+        refreshing: false
       });
+      
+      // 如果是下拉刷新，停止下拉动画
+      wx.stopPullDownRefresh();
     }
   },
   // 编辑宠物记录
@@ -131,6 +166,8 @@ Page({
   
   // 添加新记录
   addNewRecord: function() {
+    // 标记需要刷新，在返回时触发
+    this.needRefresh = true;
     wx.navigateTo({
       url: '/pages/addRecord/addRecord?petId=' + this.petId
     });

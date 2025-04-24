@@ -42,56 +42,102 @@
   padding: 30rpx;
   border-radius: 16rpx;
   margin-bottom: 30rpx;
-  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.05);
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+  border: 1rpx solid rgba(0, 0, 0, 0.03);
+  position: relative;
+  overflow: hidden;
+}
+
+.pet-header::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 6rpx;
+  height: 100%;
+  background-color: var(--primary-color);
+  opacity: 0.7;
 }
 
 .pet-avatar {
   width: 160rpx;
   height: 160rpx;
-  border-radius: 16rpx;
+  border-radius: 80rpx;
   overflow: hidden;
   margin-right: 30rpx;
-  background-color: #f0f0f0;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.1);
+  border: 3rpx solid #FFF5E6;
+  background-color: #FFF5E6;
 }
 
 .pet-avatar image {
   width: 100%;
   height: 100%;
+  object-fit: cover;
+}
+
+.default-pet-icon {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #FFF5E6;
+  font-size: 80rpx;
+  color: #A67C52;
 }
 
 .pet-info {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
 .pet-name {
-  font-size: 40rpx;
+  font-size: 36rpx;
   font-weight: bold;
-  margin-bottom: 16rpx;
   color: #333;
-}
-
-.pet-breed {
-  font-size: 28rpx;
-  color: #666;
-  margin-bottom: 12rpx;
+  display: flex;
+  align-items: center;
+  max-width: 60%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .pet-status {
   display: inline-block;
   font-size: 24rpx;
   padding: 6rpx 16rpx;
-  border-radius: 20rpx;
-  margin-bottom: 12rpx;
+  border-radius: 30rpx;
+  box-shadow: 0 2rpx 4rpx rgba(0,0,0,0.05);
+}
+
+.info-item {
+  display: flex;
+  font-size: 28rpx;
+  color: #666;
+  width: 100%;
 }
 
 .status-hospitalized {
-  background-color: #e6f7ff;
-  color: #1890ff;
+  background-color: rgba(212, 181, 158, 0.15);
+  color: #A67C52;
+  border: 1rpx solid rgba(212, 181, 158, 0.3);
 }
 
 .status-postop {
-  background-color: #f6ffed;
-  color: #52c41a;
+  background-color: rgba(255, 152, 0, 0.15);
+  color: #FF9800;
+  border: 1rpx solid rgba(255, 152, 0, 0.3);
 }
 
 .pet-reason, .pet-time {
@@ -100,20 +146,43 @@
   margin-bottom: 8rpx;
 }
 
-/* 主人信息 */
-.owner-info {
-  background-color: white;
-  padding: 30rpx;
-  border-radius: 16rpx;
-  margin-bottom: 30rpx;
-  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.05);
+.item-label {
+  font-size: 28rpx;
+  color: #999;
+  min-width: 150rpx;
+}
+
+.item-value {
+  font-size: 28rpx;
+  color: #333;
+  flex: 1;
+}
+
+.time-value {
+  font-size: 24rpx;
 }
 
 .section-title {
   font-size: 32rpx;
   font-weight: bold;
-  margin-bottom: 20rpx;
+  margin: 30rpx 0 20rpx;
   color: #333;
+  position: relative;
+  padding-left: 20rpx;
+  display: flex;
+  align-items: center;
+}
+
+.section-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8rpx;
+  height: 32rpx;
+  background-color: var(--primary-color);
+  border-radius: 4rpx;
 }
 
 .owner-content {
@@ -125,46 +194,52 @@
   margin-bottom: 16rpx;
 }
 
-.item-label {
-  font-size: 28rpx;
-  color: #666;
-  width: 140rpx;
-}
-
-.item-value {
-  font-size: 28rpx;
-  color: #333;
-  flex: 1;
-}
-
 /* 操作按钮 */
 .action-buttons {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 30rpx;
+  margin: 30rpx 0;
+  gap: 20rpx;
 }
 
-.btn-add, .btn-share {
-  flex: 1;
-  margin: 0 10rpx;
-  height: 80rpx;
+.action-buttons button {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28rpx;
+  height: 100rpx;
   border-radius: 12rpx;
+  font-size: 30rpx;
+  font-weight: 500;
+  color: white;
+  flex: 1;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  letter-spacing: 2rpx;
+}
+
+.action-buttons button:active {
+  transform: scale(0.98);
   box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.1);
 }
 
 .btn-add {
-  background-color: var(--primary-color);
+  background: linear-gradient(to right, var(--primary-color), #D4B59E);
   color: white;
 }
 
+.btn-add .icon {
+  font-size: 36rpx;
+  margin-right: 10rpx;
+}
+
 .btn-share {
-  background-color: white;
-  color: var(--primary-color);
-  border: 1rpx solid var(--primary-color);
+  background: linear-gradient(to right, #A67C52, #D4B59E);
+  color: white;
+}
+
+.btn-share .icon {
+  font-size: 32rpx;
+  margin-right: 10rpx;
 }
 
 .action-buttons image {
@@ -180,24 +255,47 @@
 
 .record-item {
   background-color: white;
-  margin-bottom: 20rpx;
-  padding: 30rpx;
+  padding: 24rpx;
   border-radius: 16rpx;
-  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.05);
+  margin-bottom: 24rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+  border: 1rpx solid rgba(0, 0, 0, 0.03);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.record-item:active {
+  transform: scale(0.98);
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.05);
+}
+
+.record-item::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 6rpx;
+  height: 100%;
+  background-color: #A67C52;
+  opacity: 0.7;
 }
 
 .record-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20rpx;
+  margin-bottom: 16rpx;
   padding-bottom: 16rpx;
-  border-bottom: 1rpx solid #f0f0f0;
+  border-bottom: 1rpx solid rgba(212, 181, 158, 0.2);
 }
 
 .record-time {
-  font-size: 26rpx;
+  font-size: 24rpx;
   color: #999;
+  background-color: #F8F8F8;
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
 }
 
 .record-actions {
@@ -234,16 +332,22 @@
 .record-images {
   display: flex;
   flex-wrap: wrap;
-  margin-top: 20rpx;
+  margin-top: 16rpx;
+  gap: 10rpx;
 }
 
 .record-image {
-  width: 210rpx;
-  height: 210rpx;
-  margin-right: 15rpx;
-  margin-bottom: 15rpx;
-  border-radius: 8rpx;
-  background-color: #f0f0f0;
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 12rpx;
+  object-fit: cover;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+  border: 2rpx solid white;
+  transition: all 0.3s ease;
+}
+
+.record-image:active {
+  transform: scale(0.95);
 }
 
 /* 空状态 */

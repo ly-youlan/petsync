@@ -15,18 +15,25 @@ exports.main = async (event, context) => {
   console.log('创建宠物记录请求参数:', event)
   
   try {
-    // 检查必要参数
-    if (!event.petInfo || !event.petInfo.name || !event.petInfo.reason) {
+    // 检查必要参数 - 只要求宠物名称和主人电话必填
+    if (!event.petInfo || !event.petInfo.name) {
       return {
         success: false,
-        errMsg: '缺少必要的宠物信息'
+        errMsg: '请填写宠物名称'
+      }
+    }
+    
+    if (!event.ownerInfo || !event.ownerInfo.phoneNumber) {
+      return {
+        success: false,
+        errMsg: '请填写主人电话'
       }
     }
     
     if (!event.recordContent) {
       return {
         success: false,
-        errMsg: '缺少记录内容'
+        errMsg: '请填写初次记录内容'
       }
     }
     
@@ -66,31 +73,22 @@ exports.main = async (event, context) => {
       }
     }
     
-    // 上传图片
+    // 处理前端上传的图片ID
     let fileIDs = []
-    if (event.tempFilePaths && event.tempFilePaths.length > 0) {
-      // 获取临时文件路径
-      const tempFilePaths = event.tempFilePaths
-      
-      // 上传图片到云存储
-      for (let i = 0; i < tempFilePaths.length; i++) {
-        const tempFile = tempFilePaths[i]
-        const cloudPath = `pet_images/${openid}/${Date.now()}_${i}.jpg`
-        
-        try {
-          const fileUploadRes = await cloud.uploadFile({
-            cloudPath: cloudPath,
-            fileContent: Buffer.from(tempFile, 'base64')
-          })
-          fileIDs.push(fileUploadRes.fileID)
-        } catch (err) {
-          console.error('上传图片失败:', err)
-        }
-      }
+    
+    // 检查是否有文件ID
+    if (event.fileIDs && event.fileIDs.length > 0) {
+      console.log('收到前端上传的文件ID:', event.fileIDs)
+      fileIDs = event.fileIDs
+    } else {
+      console.log('没有收到图片ID')
+      // 使用默认图片（可选）
+      // const defaultImageID = 'cloud://cloud1-2gq53kbja8238be1.636c-cloud1-2gq53kbja8238be1-1356051063/default_pet_avatar.jpg'
+      // fileIDs.push(defaultImageID)
     }
     
     // 使用第一张上传的图片作为宠物头像
-    let avatarFileID = ''
+    let avatarFileID = fileIDs.length > 0 ? fileIDs[0] : ''
     
     // 创建宠物记录
     const petRecord = {

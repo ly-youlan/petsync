@@ -65,29 +65,32 @@
             </view>
           </block>
         </view>
+        
         <view class="pet-info">
-          <view>
-            <view class="pet-name-row">
-              <view class="pet-name">{{item.petInfo.name}}</view>
-              <view class="pet-time">
-                <text>{{item.createTime}}</text>
-              </view>
+          <!-- 第一行：宠物名称和主人电话 -->
+          <view class="info-row name-phone-row">
+            <view class="pet-name">{{item.petInfo.name}}</view>
+            <view class="pet-owner">
+              <text class="owner-phone">{{item.ownerInfo.phoneNumber || '未知'}}</text>
             </view>
-            
+          </view>
+          
+          <!-- 第二行：标签 -->
+          <view class="info-row">
             <view class="pet-tags">
               <view wx:for="{{item.tags}}" wx:for-item="tag" wx:key="index"
                     class="pet-tag {{tag === '在院' ? 'tag-hospitalized' : (tag === '出院' ? 'tag-postop' : 'tag-other')}}">
                 <text>{{tag}}</text>
               </view>
             </view>
-            
-            <view class="pet-breed">{{item.petInfo.breed || '未知品种'}}</view>
           </view>
           
-          <view class="pet-owner">
-            <view class="owner-label">主人</view>
-            <view class="owner-phone">{{item.ownerInfo.phoneNumber || '未知'}}</view>
+          <!-- 第三行：品种和入院原因 -->
+          <view class="info-row breed-reason-row">
+            <text class="pet-breed">{{item.petInfo.breed || '未知品种'}}</text>
+            <text class="pet-reason" wx:if="{{item.reason}}">- {{item.reason}}</text>
           </view>
+          
         </view>
         
         <view class="arrow">
@@ -107,9 +110,6 @@
       </view>
       <view class="empty-text">暂无宠物记录</view>
       <view class="empty-subtext">点击上方按钮创建新的宠物记录</view>
-      <view class="empty-action" bindtap="goToCreatePetRecord">
-        <text>立即创建</text>
-      </view>
     </view>
   </block>
   

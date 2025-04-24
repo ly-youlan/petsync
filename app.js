@@ -90,20 +90,29 @@ App({
                   duration: 1500
                 });
                 
-                // 如果当前页面是登录页，自动跳转到工作台
+                // 如果当前页面是登录页，根据用户角色跳转到相应页面
                 const pages = getCurrentPages();
                 if (pages.length === 0 || (pages.length > 0 && pages[0].route === 'pages/login/login')) {
                   setTimeout(() => {
                     wx.showLoading({
-                      title: '正在进入工作台',
+                      title: '正在登录',
                       mask: true
                     });
                     
                     setTimeout(() => {
                       wx.hideLoading();
-                      wx.reLaunch({
-                        url: '/pages/workbench/workbench'
-                      });
+                      // 根据用户角色跳转到不同页面
+                      if (latestUserData.userRole === 'owner') {
+                        console.log('宠物主人登录，跳转到宠物主人主页');
+                        wx.reLaunch({
+                          url: '/pages/ownerHome/ownerHome'
+                        });
+                      } else {
+                        console.log('兽医登录，跳转到工作台');
+                        wx.reLaunch({
+                          url: '/pages/workbench/workbench'
+                        });
+                      }
                     }, 1000);
                   }, 800);
                 }

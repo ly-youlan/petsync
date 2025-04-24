@@ -6,7 +6,9 @@
     "pages/petDetail/petDetail",
     "pages/createPetRecord/createPetRecord",
     "pages/addRecord/addRecord",
-    "pages/devTools/devTools"
+    "pages/devTools/devTools",
+    "pages/ownerHome/ownerHome",
+    "pages/ownerPetDetail/ownerPetDetail"
   ],
   "window": {
     "backgroundTextStyle": "light",

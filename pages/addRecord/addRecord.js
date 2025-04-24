@@ -76,9 +76,46 @@ Page({
       sizeType: ['compressed'],
       sourceType: ['album', 'camera'],
       success: function(res) {
-        // 返回选定照片的本地文件路径列表
-        that.setData({
-          'newRecord.images': that.data.newRecord.images.concat(res.tempFilePaths)
+        wx.showLoading({
+          title: '正在上传...',
+        });
+        
+        const uploadTasks = res.tempFilePaths.map(filePath => {
+          return new Promise((resolve, reject) => {
+            // 生成随机文件名
+            const cloudPath = `pet_records/${Date.now()}_${Math.floor(Math.random() * 1000)}${filePath.match(/\.[^.]+?$/)[0]}`;
+            
+            wx.cloud.uploadFile({
+              cloudPath: cloudPath,
+              filePath: filePath,
+              success: res => {
+                console.log('上传成功', res);
+                resolve(res.fileID);
+              },
+              fail: err => {
+                console.error('上传失败', err);
+                reject(err);
+              }
+            });
+          });
+        });
+        
+        Promise.all(uploadTasks).then(fileIDs => {
+          that.setData({
+            'newRecord.images': that.data.newRecord.images.concat(fileIDs)
+          });
+          wx.hideLoading();
+          wx.showToast({
+            title: '上传成功',
+            icon: 'success'
+          });
+        }).catch(err => {
+          wx.hideLoading();
+          wx.showToast({
+            title: '上传失败',
+            icon: 'none'
+          });
+          console.error('上传失败', err);
         });
       }
     });
@@ -88,6 +125,21 @@ Page({
   deleteImage: function(e) {
     const index = e.currentTarget.dataset.index;
     const images = this.data.newRecord.images;
+    const fileID = images[index];
+    
+    // 如果是云文件ID，则删除云存储文件
+    if (fileID && fileID.startsWith('cloud://')) {
+      wx.cloud.deleteFile({
+        fileList: [fileID],
+        success: res => {
+          console.log('删除成功', res);
+        },
+        fail: err => {
+          console.error('删除失败', err);
+        }
+      });
+    }
+    
     images.splice(index, 1);
     this.setData({
       'newRecord.images': images
@@ -97,9 +149,12 @@ Page({
   // 预览图片
   previewImage: function(e) {
     const current = e.currentTarget.dataset.src;
+    // 如果是云文件ID，需要获取临时链接
+    const urls = this.data.newRecord.images;
+    
     wx.previewImage({
       current: current,
-      urls: this.data.newRecord.images
+      urls: urls
     });
   },
 
@@ -115,15 +170,23 @@ Page({
     }
 
     this.setData({ loading: true });
+    wx.showLoading({
+      title: '正在保存...',
+      mask: true
+    });
 
     const app = getApp();
     const openid = app.globalData.openid;
+    console.log('当前用户openid:', openid);
+    console.log('当前宠物ID:', this.data.petId);
     
     // 从本地存储中获取宠物记录
     const petRecords = wx.getStorageSync('petRecords_' + openid) || [];
+    console.log('获取到的宠物记录列表:', petRecords);
     
     // 查找对应ID的宠物记录
     const petRecordIndex = petRecords.findIndex(record => record._id === this.data.petId);
+    console.log('宠物记录索引:', petRecordIndex);
     
     if (petRecordIndex !== -1) {
       // 创建新的记录
@@ -133,6 +196,8 @@ Page({
         createTime: this._formatDate(new Date())
       };
       
+      console.log('新记录内容:', newUpdate);
+      
       // 如果没有updates数组，创建一个
       if (!petRecords[petRecordIndex].updates) {
         petRecords[petRecordIndex].updates = [];
@@ -141,21 +206,64 @@ Page({
       // 将新记录添加到数组开头
       petRecords[petRecordIndex].updates.unshift(newUpdate);
       
-      // 保存到本地存储
-      wx.setStorageSync('petRecords_' + openid, petRecords);
-      
-      wx.showToast({
-        title: '添加成功',
-        icon: 'success',
-        duration: 2000
-      });
-      
-      // 添加成功后返回上一页
-      setTimeout(() => {
+      try {
+        // 保存到本地存储
+        wx.setStorageSync('petRecords_' + openid, petRecords);
+        console.log('保存成功，更新后的宠物记录:', petRecords[petRecordIndex]);
+        
+        // 同步到云端，确保数据不会丢失
+        wx.cloud.callFunction({
+          name: 'updatePetRecord',
+          data: {
+            petId: this.data.petId,
+            updates: petRecords[petRecordIndex].updates,
+            openid: openid
+          },
+          success: res => {
+            console.log('记录同步到云端成功:', res);
+            
+            wx.hideLoading();
+            wx.showToast({
+              title: '添加成功',
+              icon: 'success',
+              duration: 2000
+            });
+            
+            // 添加成功后返回上一页
+            setTimeout(() => {
+              this.setData({ loading: false });
+              wx.navigateBack();
+            }, 2000);
+          },
+          fail: err => {
+            console.error('记录同步到云端失败:', err);
+            
+            wx.hideLoading();
+            wx.showToast({
+              title: '添加成功(本地)',
+              icon: 'success',
+              duration: 2000
+            });
+            
+            // 添加成功后返回上一页
+            setTimeout(() => {
+              this.setData({ loading: false });
+              wx.navigateBack();
+            }, 2000);
+          }
+        });
+      } catch (error) {
+        console.error('保存失败:', error);
+        wx.hideLoading();
         this.setData({ loading: false });
-        wx.navigateBack();
-      }, 2000);
+        wx.showToast({
+          title: '保存失败',
+          icon: 'none'
+        });
+      }
     } else {
+      console.error('未找到对应的宠物记录');
+      wx.hideLoading();
       this.setData({ loading: false });
       wx.showToast({
         title: '未找到宠物记录',
@@ -174,5 +282,10 @@ Page({
     const second = date.getSeconds().toString().padStart(2, '0');
     
     return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+  },
+  
+  // 返回上一页
+  navigateBack: function() {
+    wx.navigateBack();
   }
 })

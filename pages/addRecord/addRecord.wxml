@@ -1,46 +1,83 @@
 <!--pages/addRecord/addRecord.wxml-->
 <view class="container">
   <!-- 宠物信息 -->
-  <view class="pet-info" wx:if="{{petInfo}}">
-    <view class="pet-name">{{petInfo.name}}</view>
-    <view class="pet-breed">{{petInfo.breed}}</view>
-    <view class="pet-status {{petInfo.status === '住院' ? 'status-hospitalized' : 'status-postop'}}">
-      {{petInfo.status || '术后'}}
+  <view class="pet-info-wrapper">
+    <view class="pet-info" wx:if="{{petInfo}}">
+      <view class="pet-info-header">
+        <view class="pet-avatar">
+          <text class="pet-emoji">🐈</text>
+        </view>
+        <view class="pet-details">
+          <view class="pet-name">{{petInfo.name}}</view>
+          <view class="pet-breed">{{petInfo.breed || '未知品种'}}</view>
+        </view>
+        <view class="pet-status {{petInfo.status === '住院' ? 'status-hospitalized' : 'status-postop'}}">
+          {{petInfo.status || '术后'}}
+        </view>
+      </view>
     </view>
   </view>
   
   <!-- 记录表单 -->
-  <view class="record-form">
-    <view class="form-item">
-      <textarea class="content-textarea" 
-                placeholder="请输入宠物状态记录内容..." 
-                bindinput="inputContent"
-                value="{{newRecord.content}}"
-                maxlength="500"></textarea>
-      <view class="textarea-counter">{{newRecord.content.length}}/500</view>
-    </view>
+  <view class="form-wrapper">
+    <view class="record-form">
+      <view class="form-title">添加状态记录</view>
+      <view class="form-item">
+        <textarea class="content-textarea" 
+                  placeholder="请输入宠物状态记录内容..." 
+                  bindinput="inputContent"
+                  value="{{newRecord.content}}"
+                  maxlength="500"
+                  focus="true"></textarea>
+        <view class="textarea-counter {{newRecord.content.length > 450 ? 'counter-warning' : ''}}">{{newRecord.content.length}}/500</view>
+      </view>
     
-    <!-- 图片上传 -->
-    <view class="form-item">
-      <view class="upload-title">添加图片（最多9张）</view>
-      <view class="image-list">
-        <!-- 已上传图片 -->
-        <view class="image-item" wx:for="{{newRecord.images}}" wx:key="index">
-          <image src="{{item}}" mode="aspectFill" bindtap="previewImage" data-src="{{item}}"></image>
-          <view class="delete-btn" bindtap="deleteImage" data-index="{{index}}">×</view>
+      <!-- 图片上传 -->
+      <view class="form-item">
+        <view class="upload-title">
+          <text>添加图片</text>
+          <text class="upload-count">{{newRecord.images.length}}/9</text>
         </view>
-        
-        <!-- 添加图片按钮 -->
-        <view class="image-item add-image" bindtap="chooseImage" wx:if="{{newRecord.images.length < 9}}">
-          <view class="add-icon">+</view>
+        <view class="image-list">
+          <!-- 已上传图片 -->
+          <view class="image-item" wx:for="{{newRecord.images}}" wx:key="index">
+            <image src="{{item}}" mode="aspectFill" bindtap="previewImage" data-src="{{item}}" show-menu-by-longpress></image>
+            <view class="delete-btn" bindtap="deleteImage" data-index="{{index}}">
+              <text class="delete-icon">×</text>
+            </view>
+          </view>
+          
+          <!-- 添加图片按钮 -->
+          <view class="image-item add-image" bindtap="chooseImage" wx:if="{{newRecord.images.length < 9}}">
+            <view class="add-icon">
+              <text class="add-icon-plus">+</text>
+              <text class="add-icon-text">照片</text>
+            </view>
+          </view>
         </view>
       </view>
     </view>
   </view>
   
   <!-- 提交按钮 -->
-  <view class="form-actions">
-    <button class="btn-cancel" bindtap="navigateBack">取消</button>
-    <button class="btn-submit" bindtap="submitRecord" loading="{{loading}}">提交</button>
+  <view class="actions-wrapper">
+    <view class="form-actions">
+      <button class="btn-cancel" bindtap="navigateBack" hover-class="btn-hover">
+        <text class="btn-icon">←</text>
+        <text>取消</text>
+      </button>
+      <button class="btn-submit" bindtap="submitRecord" loading="{{loading}}" hover-class="btn-hover">
+        <text class="btn-icon">✓</text>
+        <text>提交</text>
+      </button>
+    </view>
+  </view>
+  
+  <!-- 加载中遮罩 -->
+  <view class="loading-mask" wx:if="{{loading}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <view class="loading-text">正在保存...</view>
+    </view>
   </view>
 </view>

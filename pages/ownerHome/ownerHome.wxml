@@ -1,0 +1,95 @@
+<!--pages/ownerHome/ownerHome.wxml-->
+<view class="container">
+  <!-- 头部区域 -->
+  <view class="header">
+    <view class="user-info">
+      <view class="avatar">
+        <text class="avatar-text">{{ownerInfo.name ? ownerInfo.name.substring(0,1) : '主'}}</text>
+      </view>
+      <view class="user-details">
+        <view class="user-name">{{ownerInfo.name || '宠物主人'}}</view>
+        <view class="user-phone">{{ownerInfo.phone || '未设置手机号'}}</view>
+      </view>
+    </view>
+    <view class="logout-btn" bindtap="logout">退出登录</view>
+  </view>
+  
+  <!-- 搜索区域 -->
+  <view class="search-section">
+    <view class="search-box">
+      <icon type="search" size="16" color="#999"></icon>
+      <input 
+        class="search-input" 
+        placeholder="搜索宠物名称" 
+        confirm-type="search"
+        value="{{searchValue}}"
+        bindinput="onSearch"
+      />
+      <view class="clear-btn" bindtap="clearSearch" wx:if="{{searchValue}}">
+        <icon type="clear" size="16" color="#999"></icon>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 加载中 -->
+  <view class="loading-container" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <view class="loading-text">加载中...</view>
+  </view>
+  
+  <!-- 宠物记录列表 -->
+  <view class="pet-list" wx:if="{{!loading && petRecords.length > 0}}">
+    <view 
+      class="pet-card" 
+      wx:for="{{petRecords}}" 
+      wx:key="_id"
+      bindtap="viewPetDetail"
+      data-id="{{item._id}}"
+    >
+      <view class="pet-card-left">
+        <image 
+          class="pet-avatar" 
+          src="{{item.petInfo.avatar}}" 
+          mode="aspectFill"
+          wx:if="{{item.petInfo.avatar}}"
+        ></image>
+        <view class="default-avatar" wx:else>
+          <text class="default-avatar-text">🐾</text>
+        </view>
+      </view>
+      
+      <view class="pet-card-content">
+        <view class="pet-name-row">
+          <text class="pet-name">{{item.petInfo.name}}</text>
+          <view class="pet-status {{item.status === '住院' ? 'status-hospitalized' : 'status-postop'}}">
+            {{item.status || '术后'}}
+          </view>
+        </view>
+        
+        <view class="pet-tags" wx:if="{{item.tags && item.tags.length > 0}}">
+          <view class="pet-tag" wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this">{{tag}}</view>
+        </view>
+        
+        <view class="pet-info-row">
+          <text class="pet-breed" wx:if="{{item.petInfo.breed}}">{{item.petInfo.breed}}</text>
+          <text class="pet-reason" wx:if="{{item.reason}}">{{item.reason}}</text>
+        </view>
+        
+        <view class="pet-clinic" wx:if="{{item.clinicName}}">
+          <text class="clinic-name">{{item.clinicName}}</text>
+        </view>
+      </view>
+      
+      <view class="pet-card-right">
+        <view class="arrow-right">›</view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{!loading && emptyState}}">
+    <view class="empty-icon">🐾</view>
+    <view class="empty-text">暂无宠物记录</view>
+    <view class="empty-subtext">当医院为您的宠物创建记录后，将会显示在这里</view>
+  </view>
+</view>

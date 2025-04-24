@@ -19,43 +19,118 @@ exports.main = async (event, context) => {
     // 构建查询条件
     let query = {}
     
+    // 如果提供了宠物ID，则直接查询该宠物记录
+    if (event.petId) {
+      console.log('根据宠物ID查询:', event.petId)
+      const petRecord = await db.collection('petRecords').doc(event.petId).get()
+      
+      // 如果是宠物主人查询，需要验证手机号
+      if (event.userRole === 'owner' && petRecord.data) {
+        // 检查宠物记录的主人手机号是否与用户匹配
+        const ownerPhone = event.ownerPhone || (await db.collection('users').where({ openid }).get()).data[0]?.phoneNumber
+        
+        if (ownerPhone && petRecord.data.ownerInfo && petRecord.data.ownerInfo.phoneNumber === ownerPhone) {
+          return {
+            success: true,
+            petRecords: [petRecord.data]
+          }
+        } else {
+          console.log('手机号不匹配，无权查看此宠物记录')
+          return {
+            success: false,
+            errMsg: '无权查看此宠物记录'
+          }
+        }
+      }
+      
+      return {
+        success: true,
+        petRecords: petRecord.data ? [petRecord.data] : []
+      }
+    }
+    
     // 如果提供了诊所ID，则按诊所ID查询
     if (event.clinicId) {
       query.clinicId = event.clinicId
     }
     
-    // 如果是兽医用户，则查询该兽医关联的诊所的所有宠物记录
-    // 如果是普通用户，则只查询该用户自己的宠物记录
-    const userInfo = await db.collection('users').where({
-      openid: openid
-    }).get()
-    
-    if (userInfo.data && userInfo.data.length > 0) {
-      const user = userInfo.data[0]
+    // 如果提供了主人手机号，则按主人手机号查询（用于宠物主人查看自己的宠物记录）
+    if (event.ownerPhone) {
+      console.log('根据主人手机号查询:', event.ownerPhone)
+      query['ownerInfo.phoneNumber'] = event.ownerPhone
       
-      if (user.userRole === 'vet') {
-        // 兽医用户，获取其所在诊所的所有宠物记录
-        if (user.clinicInfo && user.clinicInfo._id) {
-          query.clinicId = user.clinicInfo._id
-        } else if (user.hospitalId) {
-          // 如果没有clinicInfo但有hospitalId，尝试获取诊所信息
-          const clinic = await db.collection('clinics').where({
-            activationCode: user.hospitalId
-          }).get()
+      // 如果是宠物主人查询模式，直接返回该手机号下的所有宠物记录
+      if (event.userRole === 'owner') {
+        // 跳过后续的用户角色检查
+        console.log('宠物主人查询模式，直接返回该手机号下的所有宠物记录')
+      } else {
+        // 继续进行用户角色检查
+        const userInfo = await db.collection('users').where({
+          openid: openid
+        }).get()
+        
+        if (userInfo.data && userInfo.data.length > 0) {
+          const user = userInfo.data[0]
           
-          if (clinic.data && clinic.data.length > 0) {
-            query.clinicId = clinic.data[0]._id
+          if (user.userRole === 'vet') {
+            // 兽医用户，获取其所在诊所的所有宠物记录
+            if (user.clinicInfo && user.clinicInfo._id) {
+              query.clinicId = user.clinicInfo._id
+            } else if (user.hospitalId) {
+              // 如果没有clinicInfo但有hospitalId，尝试获取诊所信息
+              const clinic = await db.collection('clinics').where({
+                activationCode: user.hospitalId
+              }).get()
+              
+              if (clinic.data && clinic.data.length > 0) {
+                query.clinicId = clinic.data[0]._id
+              }
+            }
+          } else {
+            // 普通用户，只获取自己的宠物记录
+            query.ownerOpenid = openid
+          }
+        } else {
+          // 用户信息不存在，返回空结果
+          return {
+            success: true,
+            petRecords: []
           }
         }
-      } else {
-        // 普通用户，只获取自己的宠物记录
-        query.ownerOpenid = openid
       }
     } else {
-      // 用户信息不存在，返回空结果
-      return {
-        success: true,
-        petRecords: []
+      // 没有提供主人手机号，按照正常流程处理
+      const userInfo = await db.collection('users').where({
+        openid: openid
+      }).get()
+      
+      if (userInfo.data && userInfo.data.length > 0) {
+        const user = userInfo.data[0]
+        
+        if (user.userRole === 'vet') {
+          // 兽医用户，获取其所在诊所的所有宠物记录
+          if (user.clinicInfo && user.clinicInfo._id) {
+            query.clinicId = user.clinicInfo._id
+          } else if (user.hospitalId) {
+            // 如果没有clinicInfo但有hospitalId，尝试获取诊所信息
+            const clinic = await db.collection('clinics').where({
+              activationCode: user.hospitalId
+            }).get()
+            
+            if (clinic.data && clinic.data.length > 0) {
+              query.clinicId = clinic.data[0]._id
+            }
+          }
+        } else {
+          // 普通用户，只获取自己的宠物记录
+          query.ownerOpenid = openid
+        }
+      } else {
+        // 用户信息不存在，返回空结果
+        return {
+          success: true,
+          petRecords: []
+        }
       }
     }
     

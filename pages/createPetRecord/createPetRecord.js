@@ -4,13 +4,18 @@ Page({
     petInfo: { name: '', breed: '', reason: '', surgeryType: '', ownerPhone: '', ownerName: '' },
     newRecord: { content: '', images: [] },
     tempFilePaths: [],
+    cloudFileIDs: [], // 云存储文件ID
     // 常用标签
     commonTags: ['在院', '出院', '自定义'],
     // 已选标签，默认选中在院
     selectedTags: ['在院'],
     // 自定义标签相关
     showCustomTagInput: false,
-    customTag: ''
+    customTag: '',
+    // 提交状态
+    isSubmitting: false,
+    // 图片上传状态
+    isUploading: false
   },
   // 输入宠物信息
   inputPetInfo: function(e) {
@@ -21,22 +26,92 @@ Page({
   },
   // 输入记录内容
   inputRecordContent: function(e) {
-    this.setData({
-      'newRecord.content': e.detail.value
-    })
+    const content = e.detail.value;
+    // 限制最大字符数为500
+    if (content.length <= 500) {
+      this.setData({
+        'newRecord.content': content
+      });
+    } else {
+      // 如果超过500字符，截取前500字符
+      this.setData({
+        'newRecord.content': content.substring(0, 500)
+      });
+      wx.showToast({
+        title: '记录内容最多500字',
+        icon: 'none',
+        duration: 1500
+      });
+    }
   },
 
   
   // 选择图片
   chooseImage: function() {
+    // 如果正在上传，不允许再次选择
+    if (this.data.isUploading) {
+      wx.showToast({
+        title: '正在上传图片，请稍后',
+        icon: 'none'
+      });
+      return;
+    }
+    
     wx.chooseImage({
-      count: 9,
+      count: 9 - this.data.tempFilePaths.length, // 最多9张图片
       sizeType: ['compressed'],
       sourceType: ['album', 'camera'],
       success: (res) => {
-        this.setData({
-          tempFilePaths: this.data.tempFilePaths.concat(res.tempFilePaths),
-          'newRecord.images': this.data.newRecord.images.concat(res.tempFilePaths)
+        // 显示上传中状态
+        this.setData({ isUploading: true });
+        wx.showLoading({ title: '正在上传图片...', mask: true });
+        
+        // 先将图片显示出来
+        const newTempFilePaths = this.data.tempFilePaths.concat(res.tempFilePaths);
+        this.setData({ tempFilePaths: newTempFilePaths });
+        
+        // 上传图片到云存储
+        const uploadTasks = res.tempFilePaths.map((filePath, index) => {
+          return new Promise((resolve, reject) => {
+            const cloudPath = `pet_images/${Date.now()}_${index}.jpg`;
+            
+            wx.cloud.uploadFile({
+              cloudPath: cloudPath,
+              filePath: filePath,
+              success: (uploadRes) => {
+                console.log('上传成功，文件ID:', uploadRes.fileID);
+                resolve(uploadRes.fileID);
+              },
+              fail: (err) => {
+                console.error('上传失败:', err);
+                reject(err);
+              }
+            });
+          });
+        });
+        
+        // 等待所有图片上传完成
+        Promise.all(uploadTasks).then(fileIDs => {
+          // 更新云文件ID列表
+          const newCloudFileIDs = this.data.cloudFileIDs.concat(fileIDs);
+          this.setData({
+            cloudFileIDs: newCloudFileIDs,
+            'newRecord.images': newCloudFileIDs,
+            isUploading: false
+          });
+          wx.hideLoading();
+          wx.showToast({
+            title: '图片上传成功',
+            icon: 'success'
+          });
+        }).catch(err => {
+          this.setData({ isUploading: false });
+          wx.hideLoading();
+          wx.showToast({
+            title: '图片上传失败',
+            icon: 'none'
+          });
+          console.error('图片上传失败:', err);
         });
       }
     });
@@ -46,14 +121,31 @@ Page({
   deleteImage: function(e) {
     const index = e.currentTarget.dataset.index;
     const tempFilePaths = [...this.data.tempFilePaths];
-    const images = [...this.data.newRecord.images];
+    const cloudFileIDs = [...this.data.cloudFileIDs];
     
+    // 删除云存储中的文件
+    const fileID = cloudFileIDs[index];
+    if (fileID) {
+      // 尝试删除云文件，但不阻塞用户操作
+      wx.cloud.deleteFile({
+        fileList: [fileID],
+        success: (res) => {
+          console.log('删除云文件成功:', res);
+        },
+        fail: (err) => {
+          console.error('删除云文件失败:', err);
+        }
+      });
+    }
+    
+    // 从数组中移除
     tempFilePaths.splice(index, 1);
-    images.splice(index, 1);
+    cloudFileIDs.splice(index, 1);
     
     this.setData({
       tempFilePaths: tempFilePaths,
-      'newRecord.images': images
+      cloudFileIDs: cloudFileIDs,
+      'newRecord.images': cloudFileIDs
     });
   },
   
@@ -135,7 +227,7 @@ Page({
   },
   // 提交宠物记录
   submitPetRecord: function() {
-    // 验证表单
+    // 验证表单 - 只验证必填项
     if (!this.data.petInfo.name) {
       wx.showToast({
         title: '请输入宠物名称',
@@ -144,17 +236,19 @@ Page({
       return;
     }
     
-    if (!this.data.petInfo.breed) {
+    if (!this.data.petInfo.ownerPhone) {
       wx.showToast({
-        title: '请输入宠物品种',
+        title: '请输入主人电话',
         icon: 'none'
       });
       return;
     }
     
-    if (!this.data.petInfo.reason) {
+    // 验证手机号格式
+    const phoneRegex = /^1[3-9]\d{9}$/;
+    if (!phoneRegex.test(this.data.petInfo.ownerPhone)) {
       wx.showToast({
-        title: '请输入入院原因',
+        title: '手机号格式不正确',
         icon: 'none'
       });
       return;
@@ -183,6 +277,9 @@ Page({
     const openid = app.globalData.openid;
     const clinicInfo = app.globalData.clinicInfo;
     
+    // 设置提交状态
+    this.setData({ isSubmitting: true });
+    
     // 显示加载中
     wx.showLoading({
       title: '创建中...',
@@ -205,7 +302,8 @@ Page({
           name: this.data.petInfo.ownerName || '宠物主人'
         },
         recordContent: this.data.newRecord.content,
-        tempFilePaths: this.data.tempFilePaths,
+        // 传递云文件ID而非临时路径
+        fileIDs: this.data.cloudFileIDs,
         // 使用第一张上传的图片作为宠物头像
         clinicInfo: clinicInfo,
         // 添加标签数组
@@ -217,18 +315,23 @@ Page({
         console.log('创建宠物记录成功:', res);
         
         if (res.result && res.result.success) {
+          // 重置提交状态
+          this.setData({ isSubmitting: false });
           wx.hideLoading();
+          
           wx.showToast({
             title: '创建成功',
             icon: 'success',
-            duration: 2000
+            duration: 1500
           });
           
-          // 创建成功后返回上一页
+          // 跳转回工作台
           setTimeout(() => {
             wx.navigateBack();
-          }, 2000);
+          }, 1800);
         } else {
+          // 重置提交状态
+          this.setData({ isSubmitting: false });
           wx.hideLoading();
           wx.showToast({
             title: res.result.errMsg || '创建失败',
@@ -239,11 +342,16 @@ Page({
       },
       fail: err => {
         console.error('创建宠物记录失败:', err);
+        
+        // 重置提交状态
+        this.setData({ isSubmitting: false });
         wx.hideLoading();
-        wx.showToast({
+        
+        wx.showModal({
           title: '创建失败',
-          icon: 'none',
-          duration: 2000
+          content: '创建宠物记录失败，请检查网络连接或重试',
+          showCancel: false,
+          confirmText: '知道了'
         });
         
         // 如果云函数调用失败，尝试使用本地存储保存

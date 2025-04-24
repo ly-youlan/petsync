@@ -547,9 +547,9 @@ Page({
     wx.setStorageSync('userInfo', userInfo);
     wx.setStorageSync('userInfo_' + mockOpenid, userInfo);
     
-    // 直接跳转到宠物列表页面
+    // 直接跳转到宠物主人主页
     wx.reLaunch({
-      url: '/pages/petList/petList'
+      url: '/pages/ownerHome/ownerHome'
     });
     
     setTimeout(() => {

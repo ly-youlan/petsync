@@ -32,6 +32,13 @@
   margin-right: 16rpx;
 }
 
+.hospital-info mp-icon.arrow {
+  margin-left: 16rpx;
+  display: flex;
+  height: 140rpx;
+  align-items: center;
+}
+
 .hospital-text {
   flex: 1;
   overflow: hidden;
@@ -78,24 +85,29 @@
 
 .filters {
   display: flex;
-  margin-top: 20rpx;
-  overflow-x: auto;
-  white-space: nowrap;
-  padding-bottom: 10rpx;
+  flex-wrap: wrap;
+  margin-bottom: 24rpx;
 }
 
 .filter {
-  padding: 10rpx 30rpx;
-  background-color: #FFF5E6; /* 淡暖色背景 */
+  padding: 12rpx 24rpx;
+  background-color: #F5F5F5;
   border-radius: 30rpx;
-  margin-right: 20rpx;
-  font-size: 28rpx;
-  color: #A67C52; /* 暖色文字 */
-  box-shadow: 0 2rpx 4rpx rgba(0,0,0,0.05);
+  margin-right: 16rpx;
+  margin-bottom: 16rpx;
+  font-size: 26rpx;
+  color: #666;
+  transition: all 0.2s ease;
+  border: 1rpx solid transparent;
+  box-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.05);
+}
+
+.filter:active {
+  transform: scale(0.95);
 }
 
 .filter.active {
-  background-color: #D4B59E; /* 淡暖色高亮 */
+  background-color: var(--primary-color);
   color: white;
   box-shadow: 0 2rpx 8rpx rgba(212, 181, 158, 0.3);
 }
@@ -104,14 +116,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #e0e0e0;
-  font-weight: bold;
+  background-color: #E8F0FE;
+  color: #4285F4;
+  padding: 12rpx 24rpx;
+  border-radius: 30rpx;
+  margin-right: 16rpx;
+  margin-bottom: 16rpx;
+  font-size: 26rpx;
+  box-shadow: 0 2rpx 8rpx rgba(66, 133, 244, 0.2);
+  border: 1rpx solid rgba(66, 133, 244, 0.1);
 }
 
 .search-box {
   position: relative;
   width: 100%;
-  margin-bottom: 20rpx;
+  margin-bottom: 24rpx;
 }
 
 .search-box input {
@@ -119,10 +138,18 @@
   padding: 24rpx 60rpx 24rpx 20rpx;
   border-radius: 12rpx;
   font-size: 28rpx;
-  box-shadow: 0 2rpx 8rpx var(--shadow-color);
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
   width: 100%;
   box-sizing: border-box;
-  height: 100rpx;
+  height: 90rpx;
+  border: 1rpx solid rgba(212, 181, 158, 0.2);
+  transition: all 0.3s ease;
+  color: #333;
+}
+
+.search-box input:focus {
+  box-shadow: 0 4rpx 16rpx rgba(212, 181, 158, 0.2);
+  border-color: rgba(212, 181, 158, 0.3);
 }
 
 .search-icon {
@@ -137,11 +164,7 @@
   height: 40rpx;
   opacity: 0.6;
 }
-.header input {
-  border: 1rpx solid var(--primary-color);
-  padding: 10rpx;
-  border-radius: 10rpx;
-}
+
 .function-list {
   display: flex;
   flex-direction: column;
@@ -154,8 +177,7 @@
 .pet-tags {
   display: flex;
   flex-wrap: wrap;
-  margin-top: 12rpx;
-  margin-bottom: 8rpx;
+  width: 100%;
 }
 
 .pet-tag {
@@ -166,24 +188,26 @@
   margin-right: 12rpx;
   margin-bottom: 8rpx;
   box-shadow: 0 2rpx 4rpx rgba(0,0,0,0.05);
+  transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .tag-hospitalized {
-  background-color: rgba(76, 175, 80, 0.15); /* 淡绿色 */
-  color: #4CAF50;
-  border: 1rpx solid rgba(76, 175, 80, 0.3);
+  background-color: rgba(212, 181, 158, 0.15); /* 淡暖色 */
+  color: #A67C52;
+  border: 1rpx solid rgba(212, 181, 158, 0.3);
 }
 
 .tag-postop {
-  background-color: rgba(255, 87, 34, 0.15); /* 淡橙色 */
-  color: #FF5722;
-  border: 1rpx solid rgba(255, 87, 34, 0.3);
+  background-color: rgba(255, 152, 0, 0.15); /* 淡橙色 */
+  color: #FF9800;
+  border: 1rpx solid rgba(255, 152, 0, 0.3);
 }
 
 .tag-other {
-  background-color: rgba(33, 150, 243, 0.15); /* 淡蓝色 */
-  color: #2196F3;
-  border: 1rpx solid rgba(33, 150, 243, 0.3);
+  background-color: rgba(156, 39, 176, 0.15); /* 淡紫色 */
+  color: #9C27B0;
+  border: 1rpx solid rgba(156, 39, 176, 0.3);
 }
 
 /* 自定义图标样式 */
@@ -237,21 +261,41 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--primary-color);
+  background: linear-gradient(to right, var(--primary-color), #D4B59E);
   color: white;
-  padding: 10rpx;
+  padding: 24rpx;
   border-radius: 12rpx;
-  margin: 0 20rpx 20rpx 20rpx;
-  font-size: 28rpx;
-  box-shadow: 0 2rpx 8rpx rgba(212, 181, 158, 0.3);
+  margin: 20rpx 0 30rpx 0;
+  font-size: 30rpx;
+  font-weight: 500;
+  box-shadow: 0 4rpx 16rpx rgba(212, 181, 158, 0.3);
   transition: all 0.3s ease;
-  width: calc(100% - 0rpx);
+  width: 100%;
   box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 2rpx;
+}
+
+.create-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, rgba(255,255,255,0.1), rgba(255,255,255,0.2), rgba(255,255,255,0.1));
+  transform: translateX(-100%);
+  transition: transform 0.5s;
 }
 
 .create-btn:active {
   transform: scale(0.98);
-  opacity: 0.9;
+  box-shadow: 0 2rpx 8rpx rgba(212, 181, 158, 0.2);
+}
+
+.create-btn:active::after {
+  transform: translateX(100%);
 }
 
 .create-btn mp-icon {
@@ -263,14 +307,33 @@
   margin-top: 30rpx;
 }
 
+.time-row {
+  margin-top: 4rpx;
+}
+
 .pet-card {
   display: flex;
   background-color: white;
-  padding: 24rpx;
+  padding: 24rpx 30rpx;
   margin-bottom: 24rpx;
   border-radius: 16rpx;
   box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
+  border: 1rpx solid rgba(0, 0, 0, 0.03);
+  position: relative;
+  overflow: hidden;
+  align-items: flex-start;
+}
+
+.pet-card::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 6rpx;
+  height: 100%;
+  background-color: var(--primary-color);
+  opacity: 0.7;
 }
 
 .pet-card:active {
@@ -281,11 +344,20 @@
 .pet-image {
   width: 140rpx;
   height: 140rpx;
+  min-width: 140rpx;
   margin-right: 24rpx;
-  border-radius: 70rpx;
+  border-radius: 12rpx;
   overflow: hidden;
   box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
-  border: 3rpx solid #FFF5E6;
+  border: 2rpx solid #FFF5E6;
+  position: relative;
+  z-index: 1;
+  transition: all 0.3s ease;
+  background-color: #FFF5E6;
+}
+
+.pet-card:active .pet-image {
+  transform: scale(0.95);
 }
 
 .pet-image image {
@@ -312,32 +384,53 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  gap: 12rpx;
+  overflow: hidden;
 }
 
-.pet-name-row {
+.info-row {
+  display: flex;
+  width: 100%;
+}
+
+.name-phone-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8rpx;
 }
 
 .pet-name {
   font-size: 34rpx;
   font-weight: bold;
   color: var(--text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300rpx;
+}
+
+.pet-breed, .pet-reason {
+  font-size: 26rpx;
+  color: #999;
+}
+
+.breed-reason-row {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .pet-time {
-  font-size: 24rpx;
+  font-size: 22rpx;
   color: #999;
   background-color: #F8F8F8;
   padding: 4rpx 12rpx;
   border-radius: 8rpx;
+  white-space: nowrap;
 }
 
 .pet-owner {
-  margin-top: 12rpx;
   font-size: 26rpx;
   color: #666;
   display: flex;
@@ -424,32 +517,40 @@
   padding-left: 10rpx;
 }
 
-/* 空状态样式 */
+/* 空状态 */
 .empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 80rpx 0;
+  margin-top: 100rpx;
+  padding: 40rpx;
+  background-color: rgba(255, 245, 230, 0.3);
+  border-radius: 16rpx;
+  border: 1rpx dashed rgba(212, 181, 158, 0.3);
 }
 
-.empty-state image {
-  width: 200rpx;
-  height: 200rpx;
+.empty-icon {
   margin-bottom: 30rpx;
-  opacity: 0.5;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
 }
 
 .empty-text {
   font-size: 32rpx;
+  color: #A67C52;
+  margin-bottom: 20rpx;
   font-weight: bold;
-  color: var(--secondary-color);
-  margin-bottom: 10rpx;
 }
 
 .empty-subtext {
-  font-size: 26rpx;
-  color: var(--text-light-color);
+  font-size: 28rpx;
+  color: #999;
   text-align: center;
 }
 

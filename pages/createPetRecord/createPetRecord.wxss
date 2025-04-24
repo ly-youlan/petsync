@@ -16,11 +16,21 @@
 
 /* 卡片样式 */
 .card {
-  background-color: white;
-  border-radius: 16rpx;
-  box-shadow: var(--card-shadow);
+  width: 100%;
   margin-bottom: 30rpx;
+  background: #fff;
+  border-radius: 16rpx;
   overflow: hidden;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+}
+
+.card:active {
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+  transform: translateY(2rpx);
+}
+
+.record-card {
+  border-left: 6rpx solid var(--primary-color);
 }
 
 .card-header {
@@ -32,16 +42,52 @@
 .card-title {
   font-size: 32rpx;
   font-weight: bold;
-  color: var(--secondary-color);
+  color: var(--text-color);
+}
+
+.card-subtitle {
+  font-size: 24rpx;
+  color: #999;
+  margin-left: 16rpx;
 }
 
 .card-content {
+  width: 100%;
   padding: 30rpx;
+  box-sizing: border-box;
 }
 
 /* 表单样式 */
-.form-group {
+/* 行布局 */
+.form-row {
+  width: 100%;
   margin-bottom: 24rpx;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.form-group {
+  width: 100%;
+  margin-bottom: 20rpx;
+}
+
+.form-group.half-width {
+  width: calc(50% - 10rpx);
+}
+
+.half-width {
+  width: 48%;
+}
+
+.full-width {
+  width: 100%;
+}
+
+/* 必填项标记 */
+.required {
+  color: #ff4d4f;
+  margin-left: 4rpx;
+  font-weight: bold;
 }
 
 .form-label {
@@ -57,42 +103,65 @@
   font-weight: normal;
 }
 
+/* 表单输入框 */
 .form-input {
-  width: 100%;
   height: 80rpx;
-  border: 1rpx solid var(--border-color);
-  border-radius: 12rpx;
+  border: 1rpx solid #ECECEC;
+  border-radius: 8rpx;
   padding: 0 20rpx;
   font-size: 28rpx;
-  box-sizing: border-box;
+  color: #333;
   background-color: #FAFAFA;
+  transition: all 0.3s ease;
 }
 
 .form-input:focus {
   border-color: var(--primary-color);
-  background-color: white;
+  background-color: #FFF;
+  box-shadow: 0 0 0 2rpx rgba(212, 181, 158, 0.2);
+}
+
+/* 文本域 */
+.textarea-container {
+  width: 100%;
+  position: relative;
+  margin-bottom: 30rpx;
 }
 
 .form-textarea {
   width: 100%;
-  height: 240rpx;
-  border: 1rpx solid var(--border-color);
+  height: 300rpx;
+  border: 2rpx solid #ECECEC;
   border-radius: 12rpx;
-  padding: 20rpx;
+  padding: 24rpx;
   font-size: 28rpx;
+  line-height: 1.5;
+  color: #333;
+  background-color: #FFF;
   box-sizing: border-box;
-  background-color: #FAFAFA;
 }
 
 .form-textarea:focus {
   border-color: var(--primary-color);
-  background-color: white;
+  background-color: #FFF;
+  box-shadow: 0 0 0 2rpx rgba(212, 181, 158, 0.2);
 }
 
+.textarea-counter {
+  position: absolute;
+  right: 20rpx;
+  bottom: 20rpx;
+  font-size: 24rpx;
+  color: #999;
+}
 
+.textarea-counter.warning {
+  color: #FF9800;
+}
 
 /* 标签样式 */
 .tags-container {
+  width: 100%;
   display: flex;
   flex-wrap: wrap;
   margin-bottom: 20rpx;
@@ -100,19 +169,35 @@
 
 .tag {
   padding: 12rpx 24rpx;
-  background-color: var(--light-color);
+  background-color: #F5F5F5;
+  color: #666;
   border-radius: 30rpx;
   margin-right: 20rpx;
   margin-bottom: 20rpx;
   font-size: 26rpx;
-  color: var(--secondary-color);
-  box-shadow: 0 2rpx 4rpx rgba(0,0,0,0.05);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  border: 1rpx solid transparent;
+  box-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.05);
+}
+
+.tag:active {
+  transform: scale(0.95);
 }
 
 .tag.selected {
   background-color: var(--primary-color);
   color: white;
   box-shadow: 0 2rpx 8rpx rgba(212, 181, 158, 0.3);
+}
+
+.tag.custom-tag {
+  background-color: #E8F0FE;
+  color: #4285F4;
+  display: flex;
+  gap: 6rpx;
 }
 
 .custom-tag {
@@ -125,30 +210,38 @@
 .custom-tag-input {
   display: flex;
   align-items: center;
-  margin-top: 16rpx;
   margin-bottom: 30rpx;
 }
 
-.custom-tag-input input {
+.custom-tag-input .form-input {
   flex: 1;
-  margin-right: 16rpx;
+  margin-right: 20rpx;
 }
 
 .add-tag-btn {
-  font-size: 26rpx;
-  padding: 0 30rpx;
   height: 80rpx;
   line-height: 80rpx;
+  padding: 0 30rpx;
   background-color: var(--primary-color);
   color: white;
+  font-size: 28rpx;
   border-radius: 12rpx;
+  box-shadow: 0 4rpx 8rpx rgba(212, 181, 158, 0.2);
+  transition: all 0.2s ease;
+}
+
+.add-tag-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 2rpx 4rpx rgba(212, 181, 158, 0.1);
 }
 
 .selected-tags {
   margin-top: 20rpx;
+  margin-bottom: 30rpx;
+  background-color: rgba(255, 245, 230, 0.3);
   padding: 20rpx;
-  background-color: #FAFAFA;
   border-radius: 12rpx;
+  border: 1rpx dashed rgba(212, 181, 158, 0.5);
 }
 
 .selected-tags-title {
@@ -156,6 +249,7 @@
   color: #666;
   margin-bottom: 16rpx;
   display: block;
+  font-weight: bold;
 }
 
 .selected-tags-container {
@@ -166,98 +260,160 @@
 .selected-tag {
   display: flex;
   align-items: center;
-  padding: 8rpx 20rpx;
   background-color: var(--primary-color);
   color: white;
+  padding: 8rpx 20rpx;
   border-radius: 30rpx;
+  font-size: 24rpx;
   margin-right: 16rpx;
   margin-bottom: 16rpx;
-  font-size: 26rpx;
+  box-shadow: 0 2rpx 8rpx rgba(212, 181, 158, 0.3);
 }
 
 .remove-tag {
   margin-left: 10rpx;
-  font-size: 30rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* 图片上传 */
 .image-uploader {
+  width: 100%;
   margin-top: 16rpx;
 }
 
-.upload-btn {
-  width: 180rpx;
-  height: 180rpx;
-  background-color: #F5F5F5;
+.upload-area {
+  width: 100%;
+  height: 200rpx;
+  border: 2rpx dashed #ECECEC;
+  border-radius: 12rpx;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  border-radius: 12rpx;
-  margin-bottom: 20rpx;
-  border: 1rpx dashed #DDDDDD;
+  justify-content: center;
+  background-color: #FAFAFA;
+  box-sizing: border-box;
+}
+
+.upload-area:active {
+  background-color: #F5F5F5;
+}
+
+.upload-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .upload-icon {
   font-size: 48rpx;
-  color: #BBBBBB;
+  color: var(--primary-color);
   margin-bottom: 10rpx;
 }
 
 .upload-text {
-  font-size: 26rpx;
-  color: #999999;
+  font-size: 28rpx;
+  color: #666;
+}
+
+.upload-counter {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 16rpx;
 }
 
 .image-preview-scroll {
   width: 100%;
-  white-space: nowrap;
   margin-top: 20rpx;
 }
 
 .image-preview-container {
-  display: inline-flex;
+  display: flex;
+  gap: 16rpx;
 }
 
 .image-preview-item {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 8rpx;
+  overflow: hidden;
   position: relative;
-  margin-right: 20rpx;
-  display: inline-block;
 }
 
 .image-preview {
-  width: 180rpx;
-  height: 180rpx;
-  border-radius: 12rpx;
-  object-fit: cover;
+  width: 100%;
+  height: 100%;
 }
 
 .image-delete {
   position: absolute;
-  top: -15rpx;
-  right: -15rpx;
+  top: 0;
+  right: 0;
   width: 40rpx;
   height: 40rpx;
-  background-color: rgba(0, 0, 0, 0.5);
-  color: white;
-  border-radius: 50%;
+  background-color: rgba(0,0,0,0.5);
+  border-radius: 0 0 0 8rpx;
   display: flex;
-  justify-content: center;
   align-items: center;
-  font-size: 24rpx;
+  justify-content: center;
+  color: white;
+  font-size: 28rpx;
 }
 
 /* 提交按钮 */
 .submit-btn {
-  width: 100%;
+  width: 90%;
   height: 90rpx;
   line-height: 90rpx;
   background-color: var(--primary-color);
   color: white;
   font-size: 32rpx;
   border-radius: 45rpx;
-  margin-top: 40rpx;
-  margin-bottom: 60rpx;
+  margin: 40rpx auto 60rpx;
   box-shadow: 0 6rpx 16rpx rgba(212, 181, 158, 0.3);
   font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, rgba(255,255,255,0.1), rgba(255,255,255,0.2), rgba(255,255,255,0.1));
+  transform: translateX(-100%);
+  transition: transform 0.5s;
+}
+
+.submit-btn:active {
+  transform: scale(0.98);
+  box-shadow: 0 2rpx 8rpx rgba(212, 181, 158, 0.3);
+}
+
+.submit-btn:active::after {
+  transform: translateX(100%);
+}
+
+.submit-btn.disabled {
+  background-color: #d9d9d9;
+  color: #999;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.submit-btn.disabled::after {
+  display: none;
+}
+
+.hidden {
+  display: none;
 }
