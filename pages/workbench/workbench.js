@@ -51,7 +51,8 @@ Page({
       return;
     }
     
-    if (!userData.hospitalInfo) {
+    // 检查医院信息，可能在hospitalInfo对象中或直接在根级别
+    if (!userData.hospitalName && !userData.hospitalInfo) {
       console.log('No hospital info found, redirecting to login page');
       // 未绑定医院，跳转到登录页
       wx.redirectTo({
@@ -73,11 +74,17 @@ Page({
     
     console.log('User approved, fetching pet records');
     // 已审核通过，获取宠物记录
+    
+    // 构建医院信息对象，兼容两种数据结构
+    const hospitalInfo = userData.hospitalInfo || {
+      name: userData.hospitalName,
+      address: userData.hospitalAddress
+    };
+    
     this.setData({
-      hospitalInfo: userData.hospitalInfo,
+      hospitalInfo: hospitalInfo,
       userInfo: {
-        phoneNumber: userData.phoneNumber,
-        vetName: userData.hospitalInfo.vetName
+        vetName: userData.vetName || (userData.hospitalInfo && userData.hospitalInfo.vetName)
       },
       isApproved: true
     });
@@ -314,5 +321,47 @@ Page({
     wx.navigateTo({
       url: '/pages/createPetRecord/createPetRecord',
     })
+  },
+  
+  // 跳转到设置页面
+  goToSettings: function() {
+    // 目前只是显示一个提示，未来会实现设置页面
+    wx.showActionSheet({
+      itemList: ['修改医院信息', '退出登录'],
+      success: (res) => {
+        if (res.tapIndex === 0) {
+          // 修改医院信息（未来实现）
+          wx.showToast({
+            title: '功能开发中',
+            icon: 'none'
+          });
+        } else if (res.tapIndex === 1) {
+          // 调用退出登录功能
+          this.logout();
+        }
+      }
+    });
+  },
+  
+  // 退出登录
+  logout: function() {
+    wx.showModal({
+      title: '确认退出',
+      content: '您确定要退出登录吗？',
+      success: (res) => {
+        if (res.confirm) {
+          // 清除登录状态
+          const app = getApp();
+          app.globalData.isLoggedIn = false;
+          app.globalData.openid = null;
+          app.globalData.hospitalInfo = null;
+          
+          // 跳转到登录页
+          wx.reLaunch({
+            url: '/pages/login/login'
+          });
+        }
+      }
+    });
   }
 })

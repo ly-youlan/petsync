@@ -1,17 +1,61 @@
 /* pages/workbench/workbench.wxss */
 .container {
-  padding: 30rpx;
+  padding: 20rpx;
   min-height: 100vh;
   background-color: var(--background-color);
+  box-sizing: border-box;
+}
+
+/* 顶部容器 */
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+  width: 100%;
 }
 
 /* 医院信息区域 */
 .hospital-info {
   background-color: white;
-  padding: 30rpx;
-  border-radius: 16rpx;
-  margin-bottom: 30rpx;
-  box-shadow: 0 4rpx 12rpx var(--shadow-color);
+  padding: 0 24rpx;
+  border-radius: 12rpx;
+  flex: 1;
+  box-shadow: 0 2rpx 8rpx var(--shadow-color);
+  display: flex;
+  align-items: center;
+  margin-right: 16rpx;
+  height: 150rpx;
+}
+
+.hospital-info mp-icon {
+  margin-right: 16rpx;
+}
+
+.hospital-text {
+  flex: 1;
+  overflow: hidden;
+}
+
+/* 设置按钮 */
+.settings-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  padding: 24rpx;
+  border-radius: 12rpx;
+  box-shadow: 0 2rpx 8rpx var(--shadow-color);
+  width: 90rpx;
+  height: 150rpx; 
+  box-sizing: border-box;
+}
+
+.settings-btn text {
+  font-size: 22rpx;
+  color: var(--text-light-color);
+  margin-top: 6rpx;
 }
 
 .hospital-name {
@@ -28,26 +72,37 @@
 
 /* 头部筛选和搜索区域 */
 .header {
-  margin-bottom: 30rpx;
+  margin-bottom: 20rpx;
+  width: 100%;
 }
 
 .filters {
   display: flex;
-  margin-bottom: 20rpx;
+  flex-wrap: wrap;
+  margin-bottom: 0rpx;
   background-color: white;
-  padding: 15rpx;
+  padding: 10rpx 16rpx;
   border-radius: 12rpx;
   box-shadow: 0 2rpx 8rpx var(--shadow-color);
+  width: 100%;
+  box-sizing: border-box;
+  height: 70rpx;
+  align-items: center;
 }
 
 .filter {
-  padding: 12rpx 24rpx;
-  margin-right: 15rpx;
+  padding: 10rpx 20rpx;
+  margin-right: 12rpx;
   border-radius: 30rpx;
-  font-size: 28rpx;
+  font-size: 26rpx;
   color: var(--text-light-color);
   background-color: var(--light-color);
   transition: all 0.3s ease;
+  height: 30rpx;
+  line-height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .filter.active {
@@ -58,17 +113,19 @@
 
 .search-box {
   position: relative;
-  margin-bottom: 20rpx;
+  margin-bottom: 0rpx;
+  width: 100%;
 }
 
 .search-box input {
   background-color: white;
-  padding: 20rpx 70rpx 20rpx 20rpx;
+  padding: 24rpx 60rpx 24rpx 20rpx;
   border-radius: 12rpx;
   font-size: 28rpx;
   box-shadow: 0 2rpx 8rpx var(--shadow-color);
   width: 100%;
   box-sizing: border-box;
+  height: 100rpx;
 }
 
 .search-icon {
@@ -103,40 +160,55 @@
   justify-content: center;
   background-color: var(--primary-color);
   color: white;
-  padding: 24rpx;
+  padding: 10rpx;
   border-radius: 12rpx;
-  margin-bottom: 30rpx;
-  font-size: 30rpx;
-  box-shadow: 0 4rpx 12rpx rgba(212, 181, 158, 0.3);
+  margin: 0 20rpx 20rpx 20rpx;
+  font-size: 28rpx;
+  box-shadow: 0 2rpx 8rpx rgba(212, 181, 158, 0.3);
+  transition: all 0.3s ease;
+  width: calc(100% - 0rpx);
+  box-sizing: border-box;
 }
 
-.create-btn image {
-  width: 36rpx;
-  height: 36rpx;
-  margin-right: 10rpx;
+.create-btn:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+.create-btn mp-icon {
+  margin-right: 12rpx;
 }
 
 /* 宠物记录卡片 */
 .pet-records {
-  margin-bottom: 30rpx;
+  margin-bottom: 16rpx;
 }
 
 .pet-card {
   display: flex;
   background-color: white;
-  border-radius: 16rpx;
   padding: 20rpx;
-  margin-bottom: 20rpx;
-  box-shadow: 0 2rpx 10rpx var(--shadow-color);
+  border-radius: 12rpx;
+  margin-bottom: 16rpx;
+  box-shadow: 0 2rpx 8rpx var(--shadow-color);
   position: relative;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.pet-card:active {
+  transform: translateY(2rpx);
+  box-shadow: 0 2rpx 4rpx var(--shadow-color);
 }
 
 .pet-image {
   width: 120rpx;
   height: 120rpx;
-  border-radius: 12rpx;
+  border-radius: 60rpx;
   overflow: hidden;
   margin-right: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
 }
 
 .pet-image image {
@@ -147,78 +219,104 @@
 
 .pet-info {
   flex: 1;
+  margin-right: 20rpx;
+}
+
+.pet-name-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+
+.pet-name-row mp-icon {
+  margin-right: 8rpx;
 }
 
 .pet-name {
   font-size: 32rpx;
   font-weight: bold;
   color: var(--secondary-color);
-  margin-bottom: 6rpx;
 }
 
 .pet-breed {
-  font-size: 26rpx;
+  font-size: 28rpx;
   color: var(--text-light-color);
-  margin-bottom: 10rpx;
+  margin-bottom: 12rpx;
+  margin-left: 26rpx;
 }
 
 .pet-status {
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  padding: 6rpx 16rpx;
+  border-radius: 30rpx;
   font-size: 24rpx;
-  padding: 4rpx 12rpx;
-  border-radius: 8rpx;
-  margin-bottom: 6rpx;
+  color: white;
+  margin-bottom: 12rpx;
+}
+
+.pet-status mp-icon {
+  margin-right: 6rpx;
 }
 
 .status-hospitalized {
-  background-color: var(--warning-color);
-  color: #5A3825;
+  background-color: var(--error-color);
 }
 
 .status-postop {
   background-color: var(--success-color);
-  color: white;
 }
 
 .pet-time {
+  display: flex;
+  align-items: center;
   font-size: 24rpx;
   color: #999;
 }
 
+.pet-time mp-icon {
+  margin-right: 6rpx;
+}
+
 .pet-owner {
   width: 180rpx;
-  border-left: 1px solid #eee;
-  padding-left: 20rpx;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
 .owner-label {
+  display: flex;
+  align-items: center;
   font-size: 24rpx;
-  color: #999;
-  margin-bottom: 6rpx;
+  color: var(--text-light-color);
+  margin-bottom: 12rpx;
+}
+
+.owner-label mp-icon {
+  margin-right: 6rpx;
 }
 
 .owner-phone {
+  display: flex;
+  align-items: center;
   font-size: 26rpx;
   color: var(--text-color);
 }
 
+.owner-phone mp-icon {
+  margin-right: 6rpx;
+}
+
 .arrow {
-  position: absolute;
-  right: 20rpx;
-  top: 50%;
-  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 10rpx;
 }
 
-.arrow image {
-  width: 30rpx;
-  height: 30rpx;
-  opacity: 0.3;
-}
-
-/* 空状态 */
+/* 空状态样式 */
 .empty-state {
   display: flex;
   flex-direction: column;

@@ -33,8 +33,48 @@ page {
 .subtitle {
   font-size: 28rpx;
   color: #A67C52; /* 浅棕色副标题 */
-  margin-bottom: 80rpx;
+  margin-bottom: 40rpx;
   text-align: center;
+}
+
+/* 角色选择区域 */
+.role-selector {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 40rpx;
+}
+
+.role-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 48%;
+  padding: 30rpx 0;
+  background-color: #FFFFFF;
+  border: 2rpx solid #D4B59E;
+  border-radius: 12rpx;
+  box-shadow: 0 4rpx 12rpx rgba(212, 181, 158, 0.1);
+  transition: all 0.3s ease;
+}
+
+.role-option.active {
+  background-color: #FFF1E6;
+  border-color: #8B5A2B;
+  box-shadow: 0 4rpx 12rpx rgba(139, 90, 43, 0.2);
+}
+
+.role-option image {
+  width: 80rpx;
+  height: 80rpx;
+  margin-bottom: 20rpx;
+}
+
+.role-option text {
+  font-size: 28rpx;
+  color: #8B5A2B;
+  font-weight: bold;
 }
 
 .login-form {
@@ -52,30 +92,30 @@ page {
   box-shadow: 0 2rpx 10rpx rgba(212, 181, 158, 0.1);
 }
 
-.btn-wechat {
+.btn-login {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #07C160; /* 微信绿 */
+  background-color: #C8A288; /* 奶咖色 */
   color: white;
   padding: 24rpx;
   border-radius: 12rpx;
   margin-bottom: 20rpx;
   font-size: 30rpx;
-  box-shadow: 0 4rpx 12rpx rgba(7, 193, 96, 0.2);
+  box-shadow: 0 4rpx 12rpx rgba(200, 162, 136, 0.3);
 }
 
 .btn-dev {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #4A90E2; /* 开发环境蓝色 */
+  background-color: #A89078; /* 深奶咖色 */
   color: white;
   padding: 24rpx;
   border-radius: 12rpx;
   margin-bottom: 10rpx;
   font-size: 30rpx;
-  box-shadow: 0 4rpx 12rpx rgba(74, 144, 226, 0.2);
+  box-shadow: 0 4rpx 12rpx rgba(168, 144, 120, 0.2);
 }
 
 .dev-tip {

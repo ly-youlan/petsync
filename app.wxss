@@ -1,4 +1,8 @@
 /**app.wxss**/
+/* 引入WeUI样式 */
+/* 注释掉样式引用，因为我们只需要图标组件 */
+/* @import '/miniprogram_npm/weui-miniprogram/weui-wxss/dist/style/weui.wxss'; */
+
 /* 定义全局色彩变量 - 使用低饱和度宠物风格暖色系 */
 page {
   --primary-color: #D4B59E; /* 主色调：淡棕色 */

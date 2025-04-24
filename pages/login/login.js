@@ -1,357 +1,79 @@
 // pages/login/login.js
 Page({
   data: {
-    phoneNumber: '',
     isLoading: false,
-    showHospitalModal: false,
-    hospitalName: '',
-    hospitalAddress: '',
-    vetName: ''
+    hospitalCode: '',  // 医院邀请码
+    vetName: '',       // 兽医姓名
+    ownerPhone: '',    // 宠物主人手机号
+    userRole: 'vet'    // 默认选中兽医角色
   },
 
   onLoad: function() {
     // 检查用户是否已登录
     const app = getApp();
     if (app.globalData.isLoggedIn && app.globalData.openid) {
-      // 如果已登录，检查是否已绑定医院
-      this.checkHospitalBinding(app.globalData.openid);
-    }
-  },
-
-  // 开发环境直接登录
-  devLogin: function() {
-    console.log('开发环境直接登录');
-    
-    this.setData({ isLoading: true });
-    
-    // 设置指定手机号
-    const mockPhoneNumber = '18926139619';
-    this.setData({ phoneNumber: mockPhoneNumber });
-    
-    // 获取用户OpenID并创建用户
-    this.getUserOpenId().then(openid => {
-      console.log('获取开发环境openid成功:', openid);
-      
-      // 检查用户是否存在
-      return this.checkUserExists(openid, mockPhoneNumber);
-    }).then(userInfo => {
-      console.log('用户信息:', userInfo);
-      
-      // 自动设置为已审核状态
-      userInfo.isApproved = true;
-      userInfo.hospitalName = '演示医院';
-      userInfo.hospitalAddress = '演示地址';
-      userInfo.vetName = '演示兽医';
-      
-      // 保存到本地存储
-      wx.setStorageSync('userInfo', userInfo);
-      
-      // 直接跳转到工作台
+      // 如果已登录，直接跳转到工作台
       wx.reLaunch({
         url: '/pages/workbench/workbench'
       });
-    }).catch(err => {
-      console.error('开发环境登录错误:', err);
-      wx.showToast({
-        title: '登录失败，请重试',
-        icon: 'none'
-      });
-    }).finally(() => {
-      this.setData({ isLoading: false });
-    });
-  },
-  
-  // 获取微信手机号
-  getPhoneNumber: function(e) {
-    console.log('getPhoneNumber event:', e);
-    
-    if (e.detail.errMsg !== 'getPhoneNumber:ok') {
-      wx.showToast({
-        title: '获取手机号失败',
-        icon: 'none'
-      });
-      return;
     }
+  },
 
+  // 开发环境兽医登录
+  devLogin: function() {
+    console.log('开发环境兽医登录');
+    
     this.setData({ isLoading: true });
     
-    // 先获取用户OpenID，然后才解析手机号
-    this.getUserOpenId().then(openid => {
-      console.log('Got openid:', openid);
-      
-      // 使用云函数获取手机号
-      return wx.cloud.callFunction({
-        name: 'getPhoneNumber',
-        data: {
-          code: e.detail.code  // 新版微信小程序使用 code 而非 cloudID
-        }
-      }).then(res => {
-        console.log('云函数获取手机号结果:', res);
-        
-        if (res.result && res.result.success && res.result.phoneNumber) {
-          const phoneNumber = res.result.phoneNumber;
-          console.log('获取到手机号:', phoneNumber);
-          this.setData({ phoneNumber });
-          return this.checkUserExists(openid, phoneNumber);
-        } else {
-          // 如果云函数调用失败，在开发环境下使用模拟手机号
-          console.warn('云函数获取手机号失败，使用模拟手机号:', res);
-          const mockPhoneNumber = '18926139619';
-          this.setData({ phoneNumber: mockPhoneNumber });
-          return this.checkUserExists(openid, mockPhoneNumber);
-        }
-      });
-    }).catch(err => {
-      console.error('获取手机号错误:', err);
-      wx.showToast({
-        title: '登录失败，请重试',
-        icon: 'none'
-      });
-    }).finally(() => {
-      this.setData({ isLoading: false });
-    });
-  },
-
-  // 获取用户OpenID
-  getUserOpenId: function() {
-    return new Promise((resolve, reject) => {
-      const app = getApp();
-      if (app.globalData.openid) {
-        resolve(app.globalData.openid);
-        return;
-      }
-      
-      // 先使用微信原生登录获取code
-      wx.login({
-        success: loginRes => {
-          console.log('wx.login success:', loginRes);
-          if (loginRes.code) {
-            // 模拟一个openid进行测试
-            // 注意：在真实环境中，应该使用云函数获取openid
-            const mockOpenid = 'test_openid_' + new Date().getTime();
-            app.globalData.openid = mockOpenid;
-            resolve(mockOpenid);
-            
-            /* 下面是正常的云函数调用方式，当云函数配置好后可以使用
-            wx.cloud.callFunction({
-              name: 'login',
-              data: {}
-            }).then(res => {
-              if (res.result && res.result.openid) {
-                app.globalData.openid = res.result.openid;
-                resolve(res.result.openid);
-              } else {
-                reject(new Error('获取openid失败'));
-              }
-            }).catch(reject);
-            */
-          } else {
-            reject(new Error('登录失败：' + loginRes.errMsg));
-          }
-        },
-        fail: err => {
-          console.error('wx.login fail:', err);
-          reject(err);
-        }
-      });
-    });
-  },
-
-  // 检查用户是否已存在
-  checkUserExists: function(openid, phoneNumber) {
-    console.log('Checking if user exists:', openid, phoneNumber);
-    
-    // 使用模拟数据进行测试
-    // 模拟用户不存在的情况，直接创建新用户
+    // 直接创建模拟用户
+    const mockOpenid = 'vet_' + new Date().getTime();
     const app = getApp();
+    app.globalData.openid = mockOpenid;
     app.globalData.isLoggedIn = true;
+    app.globalData.userRole = 'vet';
     
-    // 尝试使用本地存储检查用户是否存在
-    const userInfo = wx.getStorageSync('userInfo_' + openid);
-    if (userInfo) {
-      console.log('Found user in local storage:', userInfo);
-      return this.checkHospitalBinding(openid);
-    } else {
-      // 新用户，创建用户记录
-      return this.createNewUser(openid, phoneNumber);
-    }
-    
-    /* 下面是正常的云数据库调用方式，当云环境配置好后可以使用
-    const db = wx.cloud.database();
-    return db.collection('users').where({
-      _openid: openid
-    }).get().then(res => {
-      if (res.data && res.data.length > 0) {
-        // 用户已存在，检查是否已绑定医院
-        const userData = res.data[0];
-        const app = getApp();
-        app.globalData.isLoggedIn = true;
-        
-        return this.checkHospitalBinding(openid);
-      } else {
-        // 新用户，创建用户记录
-        return this.createNewUser(openid, phoneNumber);
-      }
-    });
-    */
-  },
-
-  // 创建新用户
-  createNewUser: function(openid, phoneNumber) {
-    console.log('Creating new user:', openid, phoneNumber);
-    
-    // 使用本地存储模拟数据库操作
-    const userData = {
-      _openid: openid,
-      phoneNumber: phoneNumber,
-      createTime: new Date().toISOString(),
-      hospitalInfo: null,  // 医院信息初始为空
-      isApproved: false,   // 是否已审核通过
-      role: 'vet'          // 角色为兽医
+    // 模拟医院信息
+    const hospitalInfo = {
+      id: 'hospital_123',
+      name: '演示宠物医院',
+      address: '北京市海淀区中关村大街 1 号',
+      code: 'DEMO123'
     };
     
-    // 将用户数据保存到本地存储
-    wx.setStorageSync('userInfo_' + openid, userData);
+    // 创建模拟用户信息
+    const userInfo = {
+      openid: mockOpenid,
+      vetName: '演示兽医',
+      userRole: 'vet',
+      hospitalId: hospitalInfo.id,
+      hospitalInfo: hospitalInfo,
+      isApproved: true, // 开发环境默认已审核
+      approvalStatus: 'approved', // 开发环境默认已审核
+      createTime: new Date().getTime()
+    };
     
-    const app = getApp();
-    app.globalData.isLoggedIn = true;
+    // 保存到本地存储
+    wx.setStorageSync('userInfo', userInfo);
+    wx.setStorageSync('userInfo_' + mockOpenid, userInfo);
+    wx.setStorageSync('hospitalInfo_' + hospitalInfo.id, hospitalInfo);
     
-    // 显示医院绑定弹窗
-    this.setData({ showHospitalModal: true });
+    // 设置全局数据
+    app.globalData.hospitalInfo = hospitalInfo;
     
-    return Promise.resolve();
-    
-    /* 下面是正常的云数据库调用方式，当云环境配置好后可以使用
-    const db = wx.cloud.database();
-    return db.collection('users').add({
-      data: {
-        phoneNumber: phoneNumber,
-        createTime: db.serverDate(),
-        hospitalInfo: null,  // 医院信息初始为空
-        isApproved: false,   // 是否已审核通过
-        role: 'vet'          // 角色为兽医
-      }
-    }).then(() => {
-      const app = getApp();
-      app.globalData.isLoggedIn = true;
-      
-      // 显示医院绑定弹窗
-      this.setData({ showHospitalModal: true });
+    // 直接跳转到工作台
+    wx.reLaunch({
+      url: '/pages/workbench/workbench'
     });
-    */
-  },
-
-  // 检查医院绑定状态
-  checkHospitalBinding: function(openid) {
-    console.log('Checking hospital binding for:', openid);
     
-    // 使用本地存储模拟数据库操作
-    const userData = wx.getStorageSync('userInfo_' + openid);
-    const app = getApp();
-    
-    if (userData && userData.hospitalInfo) {
-      // 已绑定医院
-      app.globalData.hospitalInfo = userData.hospitalInfo;
-      
-      if (userData.isApproved) {
-        // 已审核通过，跳转到工作台
-        wx.redirectTo({
-          url: '/pages/workbench/workbench',
-        });
-      } else {
-        // 待审核，显示待审核提示
-        wx.showModal({
-          title: '审核中',
-          content: '您的医院绑定信息正在审核中，请耐心等待',
-          showCancel: false
-        });
-      }
-    } else {
-      // 未绑定医院，显示医院绑定弹窗
-      this.setData({ showHospitalModal: true });
-    }
-    
-    return Promise.resolve();
-    
-    /* 下面是正常的云数据库调用方式，当云环境配置好后可以使用
-    const db = wx.cloud.database();
-    return db.collection('users').where({
-      _openid: openid
-    }).get().then(res => {
-      if (res.data && res.data.length > 0) {
-        const userData = res.data[0];
-        const app = getApp();
-        
-        if (userData.hospitalInfo) {
-          // 已绑定医院
-          app.globalData.hospitalInfo = userData.hospitalInfo;
-          
-          if (userData.isApproved) {
-            // 已审核通过，跳转到工作台
-            wx.redirectTo({
-              url: '/pages/workbench/workbench',
-            });
-          } else {
-            // 待审核，显示待审核提示
-            wx.showModal({
-              title: '审核中',
-              content: '您的医院绑定信息正在审核中，请耐心等待',
-              showCancel: false
-            });
-          }
-        } else {
-          // 未绑定医院，显示医院绑定弹窗
-          this.setData({ showHospitalModal: true });
-        }
-      }
-    });
-    */
-  },
-
-  // 输入手机号
-  inputPhoneNumber: function(e) {
-    this.setData({
-      phoneNumber: e.detail.value
-    });
-  },
-
-  // 手动登录
-  login: function() {
-    if (this.data.phoneNumber.length !== 11) {
-      wx.showToast({
-        title: '请输入正确的手机号',
-        icon: 'none'
-      });
-      return;
-    }
-
-    this.setData({ isLoading: true });
-    
-    // 获取当前用户openid
-    this.getUserOpenId().then(openid => {
-      return this.checkUserExists(openid, this.data.phoneNumber);
-    }).catch(err => {
-      console.error('登录错误:', err);
-      wx.showToast({
-        title: '登录失败，请重试',
-        icon: 'none'
-      });
-    }).finally(() => {
+    setTimeout(() => {
       this.setData({ isLoading: false });
-    });
+    }, 500);
   },
-
-  // 输入医院名称
-  inputHospitalName: function(e) {
+  
+  // 输入医院邀请码
+  inputHospitalCode: function(e) {
     this.setData({
-      hospitalName: e.detail.value
-    });
-  },
-
-  // 输入医院地址
-  inputHospitalAddress: function(e) {
-    this.setData({
-      hospitalAddress: e.detail.value
+      hospitalCode: e.detail.value
     });
   },
 
@@ -361,103 +83,266 @@ Page({
       vetName: e.detail.value
     });
   },
-
-  // 提交医院信息
-  submitHospitalInfo: function() {
-    if (!this.data.hospitalName || !this.data.hospitalAddress || !this.data.vetName) {
+  
+  // 输入宠物主人手机号
+  inputOwnerPhone: function(e) {
+    this.setData({
+      ownerPhone: e.detail.value
+    });
+  },
+  
+  // 兽医登录
+  vetLogin: function() {
+    // 验证表单字段
+    if (!this.data.vetName) {
       wx.showToast({
-        title: '请填写完整信息',
+        title: '请输入姓名',
         icon: 'none'
       });
       return;
     }
-
-    this.setData({ isLoading: true });
     
-    const app = getApp();
-    const openid = app.globalData.openid;
-    
-    // 使用本地存储模拟数据库操作
-    const userData = wx.getStorageSync('userInfo_' + openid) || {};
-    
-    // 更新医院信息
-    userData.hospitalInfo = {
-      name: this.data.hospitalName,
-      address: this.data.hospitalAddress,
-      vetName: this.data.vetName
-    };
-    userData.updateTime = new Date().toISOString();
-    
-    // 保存到本地存储
-    wx.setStorageSync('userInfo_' + openid, userData);
-    
-    // 更新全局数据
-    app.globalData.hospitalInfo = userData.hospitalInfo;
-    
-    // 关闭弹窗并显示成功提示
-    this.setData({ 
-      showHospitalModal: false,
-      isLoading: false
-    });
-    
-    wx.showModal({
-      title: '提交成功',
-      content: '您的医院绑定信息已提交，请等待管理员审核',
-      showCancel: false
-    });
-    
-    /* 下面是正常的云数据库调用方式，当云环境配置好后可以使用
-    const db = wx.cloud.database();
-    
-    // 更新用户的医院信息
-    db.collection('users').where({
-      _openid: app.globalData.openid
-    }).update({
-      data: {
-        hospitalInfo: {
-          name: this.data.hospitalName,
-          address: this.data.hospitalAddress,
-          vetName: this.data.vetName
-        },
-        updateTime: db.serverDate()
-      }
-    }).then(() => {
-      this.setData({ showHospitalModal: false });
-      
-      app.globalData.hospitalInfo = {
-        name: this.data.hospitalName,
-        address: this.data.hospitalAddress,
-        vetName: this.data.vetName
-      };
-      
-      wx.showModal({
-        title: '提交成功',
-        content: '您的医院绑定信息已提交，请等待管理员审核',
-        showCancel: false
-      });
-    }).catch(err => {
-      console.error('提交医院信息错误:', err);
+    if (!this.data.hospitalCode) {
       wx.showToast({
-        title: '提交失败，请重试',
+        title: '请输入医院邀请码',
         icon: 'none'
       });
-    }).finally(() => {
-      this.setData({ isLoading: false });
+      return;
+    }
+    
+    this.setData({ isLoading: true });
+    
+    // 调用云函数获取 openid
+    wx.cloud.callFunction({
+      name: 'login',
+      data: {},
+      success: res => {
+        console.log('云函数调用成功', res);
+        const openid = res.result.openid;
+        const app = getApp();
+        app.globalData.openid = openid;
+        app.globalData.isLoggedIn = true;
+        app.globalData.userRole = 'vet';
+        
+        // 模拟从云数据库查询医院信息
+        // 实际应用中应该从数据库查询医院邀请码是否有效
+        const hospitalInfo = {
+          id: 'hospital_' + this.data.hospitalCode,
+          name: '宠物医院_' + this.data.hospitalCode,
+          address: '北京市海淀区中关村大街 1 号',
+          code: this.data.hospitalCode
+        };
+        
+        // 创建用户信息
+        const userInfo = {
+          openid: openid,
+          vetName: this.data.vetName,
+          userRole: 'vet',
+          hospitalId: hospitalInfo.id,
+          hospitalInfo: hospitalInfo,
+          isApproved: false, // 默认未审核
+          approvalStatus: 'pending', // pending, approved, rejected
+          createTime: new Date().getTime()
+        };
+        
+        // 保存到本地存储
+        wx.setStorageSync('userInfo', userInfo);
+        wx.setStorageSync('userInfo_' + openid, userInfo);
+        wx.setStorageSync('hospitalInfo_' + hospitalInfo.id, hospitalInfo);
+        
+        // 设置全局数据
+        app.globalData.hospitalInfo = hospitalInfo;
+        
+        // 根据审核状态决定跳转页面
+        if (userInfo.isApproved || userInfo.approvalStatus === 'approved') {
+          // 已审核通过，跳转到工作台
+          wx.reLaunch({
+            url: '/pages/workbench/workbench'
+          });
+        } else {
+          // 显示审核中的提示
+          wx.showModal({
+            title: '审核中',
+            content: '您的账号正在审核中，请耐心等待。\n\n开发环境下可以点击“确定”模拟审核通过。',
+            confirmText: '模拟审核通过',
+            cancelText: '返回',
+            success: (res) => {
+              if (res.confirm) {
+                // 模拟审核通过
+                userInfo.isApproved = true;
+                userInfo.approvalStatus = 'approved';
+                wx.setStorageSync('userInfo', userInfo);
+                wx.setStorageSync('userInfo_' + openid, userInfo);
+                
+                // 跳转到工作台
+                wx.reLaunch({
+                  url: '/pages/workbench/workbench'
+                });
+              }
+            }
+          });
+        }
+      },
+      fail: err => {
+        console.error('云函数调用失败', err);
+        wx.showToast({
+          title: '登录失败，请重试',
+          icon: 'none'
+        });
+      },
+      complete: () => {
+        this.setData({ isLoading: false });
+      }
     });
-    */
   },
 
   // 关闭医院信息弹窗
-  closeHospitalModal() {
+  closeHospitalModal: function() {
     this.setData({
       showHospitalModal: false
     });
   },
   
   // 跳转到开发工具页面
-  goToDevTools() {
+  goToDevTools: function() {
     wx.navigateTo({
       url: '/pages/devTools/devTools'
     });
+  },
+  
+  // 选择用户角色
+  selectRole: function(e) {
+    const role = e.currentTarget.dataset.role;
+    console.log('选择角色:', role);
+    this.setData({
+      userRole: role
+    });
+  },
+  
+  // 输入宠物主人姓名
+  inputOwnerName: function(e) {
+    this.setData({
+      ownerName: e.detail.value
+    });
+  },
+  
+  // 宠物主人登录
+  ownerLogin: function() {
+    // 验证表单字段
+    if (!this.data.ownerPhone || this.data.ownerPhone.length !== 11) {
+      wx.showToast({
+        title: '请输入有效的手机号',
+        icon: 'none'
+      });
+      return;
+    }
+    
+    this.setData({ isLoading: true });
+    
+    // 使用微信原生登录获取openid
+    wx.login({
+      success: loginRes => {
+        console.log('wx.login success:', loginRes);
+        if (!loginRes.code) {
+          console.error('wx.login失败，未获取到code');
+          wx.showToast({
+            title: '登录失败，请重试',
+            icon: 'none'
+          });
+          this.setData({ isLoading: false });
+          return;
+        }
+        
+        // 调用login云函数获取openid
+        wx.cloud.callFunction({
+          name: 'login',
+          data: {}
+        }).then(loginResult => {
+          console.log('login云函数结果:', loginResult);
+          
+          if (!loginResult.result || !loginResult.result.openid) {
+            throw new Error('获取openid失败');
+          }
+          
+          const openid = loginResult.result.openid;
+          console.log('获取到openid:', openid);
+          
+          // 创建宠物主人信息
+          const userInfo = {
+            openid: openid,
+            ownerPhone: this.data.ownerPhone,
+            userRole: 'owner',
+            createTime: new Date().getTime()
+          };
+          
+          // 保存到本地存储
+          wx.setStorageSync('userInfo', userInfo);
+          wx.setStorageSync('userInfo_' + openid, userInfo);
+          wx.setStorageSync('ownerPhone_' + this.data.ownerPhone, userInfo);
+          
+          // 设置全局数据
+          const app = getApp();
+          app.globalData.openid = openid;
+          app.globalData.isLoggedIn = true;
+          app.globalData.userRole = 'owner';
+          
+          // 登录成功，跳转到宠物列表页面
+          wx.reLaunch({
+            url: '/pages/petList/petList'
+          });
+        }).catch(err => {
+          console.error('登录过程中出错:', err);
+          wx.showToast({
+            title: err.message || '登录失败，请重试',
+            icon: 'none'
+          });
+        }).finally(() => {
+          this.setData({ isLoading: false });
+        });
+      },
+      fail: err => {
+        console.error('wx.login失败:', err);
+        wx.showToast({
+          title: '登录失败，请重试',
+          icon: 'none'
+        });
+        this.setData({ isLoading: false });
+      }
+    });
+  },
+  
+  // 开发环境宠物主人直接登录
+  devLoginAsOwner: function() {
+    console.log('开发环境宠物主人直接登录');
+    
+    this.setData({ isLoading: true });
+    
+    // 直接创建模拟用户
+    const mockOpenid = 'owner_' + new Date().getTime();
+    const app = getApp();
+    app.globalData.openid = mockOpenid;
+    app.globalData.isLoggedIn = true;
+    app.globalData.userRole = 'owner';
+    
+    // 创建模拟用户信息
+    const userInfo = {
+      openid: mockOpenid,
+      ownerPhone: '13800138000',
+      userRole: 'owner',
+      createTime: new Date().getTime()
+    };
+    
+    // 保存到本地存储
+    wx.setStorageSync('userInfo', userInfo);
+    wx.setStorageSync('userInfo_' + mockOpenid, userInfo);
+    
+    // 直接跳转到宠物列表页面
+    wx.reLaunch({
+      url: '/pages/petList/petList'
+    });
+    
+    setTimeout(() => {
+      this.setData({ isLoading: false });
+    }, 500);
   }
 })

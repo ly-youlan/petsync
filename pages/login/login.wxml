@@ -1,39 +1,59 @@
 <!--pages/login/login.wxml-->
 <view class="container">
   <view class="logo">
-    <!-- 这里可以放置你的logo -->
-    <image src="/path/to/your/logo.png" mode="aspectFit"></image>
+    <!-- 使用WeUI图标替代logo -->
+    <view class="icon-container">
+      <mp-icon icon="like" color="#D4B59E" size="{{70}}"></mp-icon>
+    </view>
   </view>
-  <view class="title">宠物医院信息共享平台</view>
-  <view class="subtitle">连接兽医与宠物主的实时信息共享平台</view>
+  <view class="title">毛球来信</view>
+  <view class="subtitle">关注你的毛孩子的医疗健康</view>
   
-  <view class="login-form">
-    <button class="btn-wechat" open-type="getPhoneNumber" bindgetphonenumber="getPhoneNumber">
-      <image class="wechat-icon" src="/images/wechat-icon.png" mode="aspectFit"></image>
-      微信手机号一键登录
+  <!-- 角色选择 -->
+  <view class="role-selector">
+    <view class="role-option {{userRole === 'vet' ? 'active' : ''}}" bindtap="selectRole" data-role="vet">
+      <mp-icon icon="help" color="{{userRole === 'vet' ? '#8B5A2B' : '#D4B59E'}}" size="{{30}}"></mp-icon>
+      <text>我是兽医</text>
+    </view>
+    <view class="role-option {{userRole === 'owner' ? 'active' : ''}}" bindtap="selectRole" data-role="owner">
+      <mp-icon icon="like" color="{{userRole === 'owner' ? '#8B5A2B' : '#D4B59E'}}" size="{{30}}"></mp-icon>
+      <text>我是宠物主人</text>
+    </view>
+  </view>
+  
+  <!-- 兽医登录表单 -->
+  <view class="login-form" wx:if="{{userRole === 'vet'}}">
+    <view class="form-title">兽医登录</view>
+    
+    <input class="input-field" placeholder="请输入医院邀请码" bindinput="inputHospitalCode" />
+    <input class="input-field" placeholder="请输入兽医姓名" bindinput="inputVetName" />
+    
+    <button class="btn-login" bindtap="vetLogin">
+      <mp-icon icon="done" color="#ffffff" size="{{20}}"></mp-icon>
+      <text>登录</text>
     </button>
     
     <button class="btn-dev" bindtap="devLogin">
-      开发环境直接登录
+      <mp-icon icon="info" color="#ffffff" size="{{18}}"></mp-icon>
+      <text>开发环境登录</text>
+    </button>
+  </view>
+  
+  <!-- 宠物主人登录表单 -->
+  <view class="login-form" wx:if="{{userRole === 'owner'}}">
+    <view class="form-title">宠物主人登录</view>
+    
+    <input class="input-field" type="number" maxlength="11" placeholder="请输入手机号" bindinput="inputOwnerPhone" />
+    
+    <button class="btn-login" bindtap="ownerLogin">
+      <mp-icon icon="done" color="#ffffff" size="{{20}}"></mp-icon>
+      <text>登录</text>
     </button>
     
-    <view class="dev-tip">开发环境下微信手机号登录可能无法使用，请使用上方按钮</view>
-    
-    <view class="divider">
-      <view class="line"></view>
-      <view class="text">或</view>
-      <view class="line"></view>
-    </view>
-    
-    <input type="number" placeholder="请输入手机号" bindinput="inputPhoneNumber" />
-    <button class="btn-manual" bindtap="login">手动登录</button>
-    
-    <view class="tips">登录后需绑定医院信息，等待管理员审核</view>
-    
-    <!-- 开发工具入口 -->
-    <view class="dev-tools-entry" bindtap="goToDevTools">
-      <text>开发工具</text>
-    </view>
+    <button class="btn-dev" bindtap="devLoginAsOwner">
+      <mp-icon icon="info" color="#ffffff" size="{{18}}"></mp-icon>
+      <text>开发环境登录</text>
+    </button>
   </view>
   
   <!-- 医院信息绑定弹窗 -->
