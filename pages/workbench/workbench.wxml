@@ -4,14 +4,18 @@
   <block wx:if="{{isApproved}}">
     <view class="header-container">
       <view class="hospital-info">
-        <mp-icon icon="info" color="#8B5A2B" size="{{24}}"></mp-icon>
+        <view class="custom-icon info-icon">
+          <text>i</text>
+        </view>
         <view class="hospital-text">
-          <view class="hospital-name">{{hospitalInfo.name}}</view>
-          <view class="vet-name">兽医：{{userInfo.vetName || hospitalInfo.vetName}}</view>
+          <view class="hospital-name">{{clinicInfo.name || '宠物诊所'}}</view>
+          <view class="vet-name">兽医师：{{userInfo.vetName}}</view>
         </view>
       </view>
       <view class="settings-btn" bindtap="goToSettings">
-        <mp-icon icon="setting" color="#A67C52" size="{{24}}"></mp-icon>
+        <view class="custom-icon setting-icon">
+          <text>⚙</text>
+        </view>
         <text>设置</text>
       </view>
     </view>
@@ -20,22 +24,29 @@
       <view class="search-box">
         <input type="text" placeholder="搜索宠物名称/主人手机号" bindinput="search" />
         <view class="search-icon">
-          <mp-icon icon="search" color="#D4B59E" size="{{22}}"></mp-icon>
+          <view class="custom-icon search-icon">
+            <text>🔍</text>
+          </view>
         </view>
       </view>
       
       <view class="filters">
         <view wx:for="{{filters}}" wx:key="index" 
-              class="filter {{item === currentFilter ? 'active' : ''}}"
-              bindtap="changeFilter" data-filter="{{item}}">
+              class="filter {{selectedFilters.includes(item) ? 'active' : ''}}"
+              bindtap="toggleFilter" data-filter="{{item}}">
           <text>{{item}}</text>
+        </view>
+        <view class="filter add-filter" bindtap="showAddFilterModal">
+          <text>+</text>
         </view>
       </view>
     </view>
     
     <!-- 创建新宠物记录按钮 -->
     <view class="create-btn" bindtap="goToCreatePetRecord">
-      <mp-icon icon="add" color="#FFFFFF" size="{{24}}"></mp-icon>
+      <view class="custom-icon add-icon">
+        <text>+</text>
+      </view>
       <text>创建新宠物记录</text>
     </view>
     
@@ -43,26 +54,46 @@
     <view class="pet-records" wx:if="{{!loading && petRecords.length > 0}}">
       <view class="pet-card" wx:for="{{petRecords}}" wx:key="_id" bindtap="goToPetDetail" data-id="{{item._id}}">
         <view class="pet-image">
-          <image src="{{item.petInfo.avatar || '/images/default-pet.png'}}" mode="aspectFill"></image>
+          <block wx:if="{{item.petInfo.avatar}}">
+            <image src="{{item.petInfo.avatar}}" mode="aspectFill"></image>
+          </block>
+          <block wx:else>
+            <view class="default-pet-icon">
+              <view class="custom-icon pet-icon">
+                <text>🐈</text>
+              </view>
+            </view>
+          </block>
         </view>
         <view class="pet-info">
-          <view class="pet-name-row">
-            <view class="pet-name">{{item.petInfo.name}}</view>
+          <view>
+            <view class="pet-name-row">
+              <view class="pet-name">{{item.petInfo.name}}</view>
+              <view class="pet-time">
+                <text>{{item.createTime}}</text>
+              </view>
+            </view>
+            
+            <view class="pet-tags">
+              <view wx:for="{{item.tags}}" wx:for-item="tag" wx:key="index"
+                    class="pet-tag {{tag === '在院' ? 'tag-hospitalized' : (tag === '出院' ? 'tag-postop' : 'tag-other')}}">
+                <text>{{tag}}</text>
+              </view>
+            </view>
+            
+            <view class="pet-breed">{{item.petInfo.breed || '未知品种'}}</view>
           </view>
-          <view class="pet-breed">{{item.petInfo.breed}}</view>
-          <view class="pet-status {{item.status === '住院' ? 'status-hospitalized' : 'status-postop'}}">
-            <text>{{item.status}}</text>
-          </view>
-          <view class="pet-time">
-            <text>{{item.createTime}}</text>
+          
+          <view class="pet-owner">
+            <view class="owner-label">主人</view>
+            <view class="owner-phone">{{item.ownerInfo.phoneNumber || '未知'}}</view>
           </view>
         </view>
-        <view class="pet-owner">
-          <view class="owner-label">主人信息</view>
-          <view class="owner-phone">{{item.ownerInfo.phoneNumber}}</view>
-        </view>
+        
         <view class="arrow">
-          <mp-icon icon="more" color="#D4B59E" size="{{20}}"></mp-icon>
+          <view class="custom-icon more-icon">
+            <text>></text>
+          </view>
         </view>
       </view>
     </view>
@@ -70,7 +101,9 @@
     <!-- 空状态 -->
     <view class="empty-state" wx:if="{{!loading && petRecords.length === 0}}">
       <view class="empty-icon">
-        <mp-icon icon="warn" color="#D4B59E" size="{{60}}"></mp-icon>
+        <view class="custom-icon warn-icon">
+          <text>!</text>
+        </view>
       </view>
       <view class="empty-text">暂无宠物记录</view>
       <view class="empty-subtext">点击上方按钮创建新的宠物记录</view>
@@ -80,30 +113,7 @@
     </view>
   </block>
   
-  <!-- 待审核状态 -->
-  <block wx:elif="{{!loading && !isApproved && hospitalInfo}}">
-    <view class="pending-approval">
-      <image src="/images/pending-approval.png" mode="aspectFit"></image>
-      <view class="pending-title">审核中</view>
-      <view class="pending-text">您的医院绑定信息正在审核中</view>
-      <view class="hospital-card">
-        <view class="hospital-title">医院信息</view>
-        <view class="hospital-item">
-          <view class="item-label">医院名称：</view>
-          <view class="item-value">{{hospitalInfo.name}}</view>
-        </view>
-        <view class="hospital-item">
-          <view class="item-label">医院地址：</view>
-          <view class="item-value">{{hospitalInfo.address}}</view>
-        </view>
-        <view class="hospital-item">
-          <view class="item-label">兽医姓名：</view>
-          <view class="item-value">{{hospitalInfo.vetName}}</view>
-        </view>
-      </view>
-      <view class="pending-subtext">请耐心等待管理员审核，审核通过后即可使用平台功能</view>
-    </view>
-  </block>
+  <!-- 已删除待审核状态区块，已在登录页面处理审核状态 -->
   
   <!-- 加载中 -->
   <view class="loading" wx:if="{{loading}}">

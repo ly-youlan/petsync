@@ -78,43 +78,40 @@
 
 .filters {
   display: flex;
-  flex-wrap: wrap;
-  margin-bottom: 0rpx;
-  background-color: white;
-  padding: 10rpx 16rpx;
-  border-radius: 12rpx;
-  box-shadow: 0 2rpx 8rpx var(--shadow-color);
-  width: 100%;
-  box-sizing: border-box;
-  height: 70rpx;
-  align-items: center;
+  margin-top: 20rpx;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding-bottom: 10rpx;
 }
 
 .filter {
-  padding: 10rpx 20rpx;
-  margin-right: 12rpx;
+  padding: 10rpx 30rpx;
+  background-color: #FFF5E6; /* 淡暖色背景 */
   border-radius: 30rpx;
-  font-size: 26rpx;
-  color: var(--text-light-color);
-  background-color: var(--light-color);
-  transition: all 0.3s ease;
-  height: 30rpx;
-  line-height: 60rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  margin-right: 20rpx;
+  font-size: 28rpx;
+  color: #A67C52; /* 暖色文字 */
+  box-shadow: 0 2rpx 4rpx rgba(0,0,0,0.05);
 }
 
 .filter.active {
-  background-color: var(--primary-color);
+  background-color: #D4B59E; /* 淡暖色高亮 */
   color: white;
   box-shadow: 0 2rpx 8rpx rgba(212, 181, 158, 0.3);
 }
 
+.add-filter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #e0e0e0;
+  font-weight: bold;
+}
+
 .search-box {
   position: relative;
-  margin-bottom: 0rpx;
   width: 100%;
+  margin-bottom: 20rpx;
 }
 
 .search-box input {
@@ -153,6 +150,88 @@
   margin-bottom: 20rpx;
 }
 
+/* 宠物标签样式 */
+.pet-tags {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 12rpx;
+  margin-bottom: 8rpx;
+}
+
+.pet-tag {
+  display: inline-block;
+  padding: 6rpx 16rpx;
+  border-radius: 30rpx;
+  font-size: 22rpx;
+  margin-right: 12rpx;
+  margin-bottom: 8rpx;
+  box-shadow: 0 2rpx 4rpx rgba(0,0,0,0.05);
+}
+
+.tag-hospitalized {
+  background-color: rgba(76, 175, 80, 0.15); /* 淡绿色 */
+  color: #4CAF50;
+  border: 1rpx solid rgba(76, 175, 80, 0.3);
+}
+
+.tag-postop {
+  background-color: rgba(255, 87, 34, 0.15); /* 淡橙色 */
+  color: #FF5722;
+  border: 1rpx solid rgba(255, 87, 34, 0.3);
+}
+
+.tag-other {
+  background-color: rgba(33, 150, 243, 0.15); /* 淡蓝色 */
+  color: #2196F3;
+  border: 1rpx solid rgba(33, 150, 243, 0.3);
+}
+
+/* 自定义图标样式 */
+.custom-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  font-size: 28rpx;
+  font-weight: bold;
+}
+
+.info-icon {
+  background-color: #FFF5E6;
+  color: #8B5A2B;
+  font-style: italic;
+}
+
+.setting-icon {
+  color: #A67C52;
+  font-size: 32rpx;
+}
+
+.search-icon {
+  color: #D4B59E;
+  font-size: 32rpx;
+}
+
+.add-icon {
+  color: #FFFFFF;
+  font-size: 32rpx;
+}
+
+.more-icon {
+  color: #D4B59E;
+  font-size: 24rpx;
+}
+
+.warn-icon {
+  background-color: #FFF5E6;
+  color: #D4B59E;
+  font-size: 48rpx;
+  width: 80rpx;
+  height: 80rpx;
+}
+
 /* 创建按钮 */
 .create-btn {
   display: flex;
@@ -179,36 +258,34 @@
   margin-right: 12rpx;
 }
 
-/* 宠物记录卡片 */
+/* 宠物卡片样式 */
 .pet-records {
-  margin-bottom: 16rpx;
+  margin-top: 30rpx;
 }
 
 .pet-card {
   display: flex;
   background-color: white;
-  padding: 20rpx;
-  border-radius: 12rpx;
-  margin-bottom: 16rpx;
-  box-shadow: 0 2rpx 8rpx var(--shadow-color);
-  position: relative;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
-  width: 100%;
-  box-sizing: border-box;
 }
 
 .pet-card:active {
-  transform: translateY(2rpx);
-  box-shadow: 0 2rpx 4rpx var(--shadow-color);
+  transform: scale(0.98);
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.05);
 }
 
 .pet-image {
-  width: 120rpx;
-  height: 120rpx;
-  border-radius: 60rpx;
+  width: 140rpx;
+  height: 140rpx;
+  margin-right: 24rpx;
+  border-radius: 70rpx;
   overflow: hidden;
-  margin-right: 20rpx;
-  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+  border: 3rpx solid #FFF5E6;
 }
 
 .pet-image image {
@@ -217,43 +294,74 @@
   object-fit: cover;
 }
 
+.default-pet-icon {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #FFF5E6;
+}
+
+.pet-icon {
+  font-size: 70rpx;
+  color: #A67C52;
+}
+
 .pet-info {
   flex: 1;
-  margin-right: 20rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .pet-name-row {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 8rpx;
 }
 
-.pet-name-row mp-icon {
-  margin-right: 8rpx;
-}
-
 .pet-name {
-  font-size: 32rpx;
+  font-size: 34rpx;
   font-weight: bold;
-  color: var(--secondary-color);
+  color: var(--text-color);
 }
 
-.pet-breed {
-  font-size: 28rpx;
-  color: var(--text-light-color);
-  margin-bottom: 12rpx;
-  margin-left: 26rpx;
+.pet-time {
+  font-size: 24rpx;
+  color: #999;
+  background-color: #F8F8F8;
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
 }
 
-.pet-status {
+.pet-owner {
+  margin-top: 12rpx;
+  font-size: 26rpx;
+  color: #666;
   display: flex;
   align-items: center;
-  width: fit-content;
-  padding: 6rpx 16rpx;
-  border-radius: 30rpx;
+}
+
+.owner-label {
   font-size: 24rpx;
-  color: white;
-  margin-bottom: 12rpx;
+  color: #999;
+  margin-right: 10rpx;
+  background-color: #FFF5E6;
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
+}
+
+.owner-phone {
+  font-weight: 500;
+}
+
+.arrow {
+  display: flex;
+  align-items: center;
+  color: #D4B59E;
+  font-size: 24rpx;
 }
 
 .pet-status mp-icon {
@@ -350,17 +458,16 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 60rpx 30rpx;
+  padding: 80rpx 30rpx;
+  height: 100%;
 }
 
-.pending-approval image {
-  width: 180rpx;
-  height: 180rpx;
-  margin-bottom: 30rpx;
+.pending-icon {
+  margin-bottom: 40rpx;
 }
 
 .pending-title {
-  font-size: 36rpx;
+  font-size: 38rpx;
   font-weight: bold;
   color: var(--secondary-color);
   margin-bottom: 20rpx;
@@ -369,36 +476,52 @@
 .pending-text {
   font-size: 30rpx;
   color: var(--text-light-color);
-  margin-bottom: 40rpx;
+  margin-bottom: 50rpx;
   text-align: center;
 }
 
-.hospital-card {
+.clinic-card {
   background-color: white;
-  border-radius: 16rpx;
+  border-radius: 12rpx;
   padding: 30rpx;
   width: 100%;
-  box-shadow: 0 4rpx 12rpx var(--shadow-color);
-  margin-bottom: 40rpx;
+  box-shadow: 0 2rpx 8rpx var(--shadow-color);
+  margin-bottom: 50rpx;
 }
 
-.hospital-title {
-  font-size: 30rpx;
+.clinic-title {
+  font-size: 32rpx;
   font-weight: bold;
   color: var(--secondary-color);
-  margin-bottom: 20rpx;
+  margin-bottom: 30rpx;
   text-align: center;
+  position: relative;
 }
 
-.hospital-item {
+.clinic-title::after {
+  content: '';
+  position: absolute;
+  bottom: -10rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60rpx;
+  height: 4rpx;
+  background-color: var(--primary-color);
+  border-radius: 2rpx;
+}
+
+.clinic-item {
   display: flex;
-  margin-bottom: 15rpx;
+  margin-bottom: 20rpx;
+  padding: 10rpx 0;
+  border-bottom: 1rpx solid rgba(0,0,0,0.05);
 }
 
 .item-label {
   width: 180rpx;
   font-size: 28rpx;
   color: var(--text-light-color);
+  font-weight: 500;
 }
 
 .item-value {
@@ -411,7 +534,8 @@
   font-size: 26rpx;
   color: var(--text-light-color);
   text-align: center;
-  line-height: 1.5;
+  line-height: 1.6;
+  padding: 0 30rpx;
 }
 
 /* 加载中 */

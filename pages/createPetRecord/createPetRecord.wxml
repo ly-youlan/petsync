@@ -1,19 +1,109 @@
 <!--pages/createPetRecord/createPetRecord.wxml-->
 <view class="container">
-  <view class="section">
-    <text class="section-title">宠物基础信息</text>
-    <input placeholder="宠物名称" bindinput="inputPetInfo" data-field="name" />
-    <input placeholder="品种" bindinput="inputPetInfo" data-field="breed" />
-    <input placeholder="入院原因" bindinput="inputPetInfo" data-field="reason" />
-    <input placeholder="手术类型（选填）" bindinput="inputPetInfo" data-field="surgeryType" />
-  </view>
-  <view class="section">
-    <text class="section-title">发布动态</text>
-    <textarea placeholder="请输入记录内容" bindinput="inputRecordContent"></textarea>
-    <view class="image-uploader">
-      <view class="upload-btn" bindtap="chooseImage">+</view>
-      <image wx:for="{{tempFilePaths}}" wx:key="index" src="{{item}}" mode="aspectFill"></image>
+  <view class="card">
+    <view class="card-header">
+      <text class="card-title">宠物基础信息</text>
+    </view>
+    <view class="card-content">
+
+      
+      <!-- 宠物信息表单 -->
+      <view class="form-group">
+        <text class="form-label">宠物名称</text>
+        <input class="form-input" placeholder="请输入宠物名称" bindinput="inputPetInfo" data-field="name" />
+      </view>
+      
+      <view class="form-group">
+        <text class="form-label">品种</text>
+        <input class="form-input" placeholder="请输入宠物品种" bindinput="inputPetInfo" data-field="breed" />
+      </view>
+      
+      <view class="form-group">
+        <text class="form-label">入院原因</text>
+        <input class="form-input" placeholder="请输入入院原因" bindinput="inputPetInfo" data-field="reason" />
+      </view>
+      
+      <view class="form-group">
+        <text class="form-label">手术类型（选填）</text>
+        <input class="form-input" placeholder="如需手术，请输入类型" bindinput="inputPetInfo" data-field="surgeryType" />
+      </view>
+      
+      <view class="form-group">
+        <text class="form-label">主人电话</text>
+        <input class="form-input" placeholder="请输入主人电话" bindinput="inputPetInfo" data-field="ownerPhone" />
+      </view>
+      
+      <view class="form-group">
+        <text class="form-label">主人姓名（选填）</text>
+        <input class="form-input" placeholder="请输入主人姓名" bindinput="inputPetInfo" data-field="ownerName" />
+      </view>
     </view>
   </view>
-  <button class="btn" bindtap="submitPetRecord">提交</button>
+  
+  <view class="card">
+    <view class="card-header">
+      <text class="card-title">状态标签</text>
+    </view>
+    <view class="card-content">
+      <view class="tags-container">
+        <view wx:for="{{commonTags}}" wx:key="index" 
+              class="tag {{selectedTags.includes(item) ? 'selected' : ''}}" 
+              bindtap="toggleTag" data-tag="{{item}}">
+          {{item}}
+        </view>
+        <view class="tag custom-tag" bindtap="showCustomTagInput">
+          <text>+</text>
+          <text>自定义</text>
+        </view>
+      </view>
+      
+      <view class="custom-tag-input" wx:if="{{showCustomTagInput}}">
+        <input class="form-input" placeholder="输入自定义标签" bindinput="inputCustomTag" value="{{customTag}}" />
+        <button class="add-tag-btn" bindtap="addCustomTag">添加</button>
+      </view>
+      
+      <view class="selected-tags" wx:if="{{selectedTags.length > 0}}">
+        <text class="selected-tags-title">已选标签：</text>
+        <view class="selected-tags-container">
+          <view wx:for="{{selectedTags}}" wx:key="index" class="selected-tag">
+            <text>{{item}}</text>
+            <text class="remove-tag" bindtap="removeTag" data-index="{{index}}">×</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <view class="card">
+    <view class="card-header">
+      <text class="card-title">初次记录</text>
+    </view>
+    <view class="card-content">
+      <view class="form-group">
+        <textarea class="form-textarea" placeholder="请输入宠物初次记录内容" bindinput="inputRecordContent"></textarea>
+      </view>
+      
+      <view class="form-group">
+        <text class="form-label">上传图片 <text class="form-hint">(第一张图片将作为宠物头像显示)</text></text>
+        <view class="image-uploader">
+          <view class="upload-btn" bindtap="chooseImage">
+            <text class="upload-icon">+</text>
+            <text class="upload-text">添加图片</text>
+          </view>
+          <scroll-view scroll-x class="image-preview-scroll">
+            <view class="image-preview-container">
+              <view wx:for="{{tempFilePaths}}" wx:key="index" class="image-preview-item">
+                <image src="{{item}}" mode="aspectFill" class="image-preview"></image>
+                <view class="image-delete" catchtap="deleteImage" data-index="{{index}}">
+                  <text>×</text>
+                </view>
+              </view>
+            </view>
+          </scroll-view>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <button class="submit-btn" bindtap="submitPetRecord">提交宠物记录</button>
 </view>
