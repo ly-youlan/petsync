@@ -71,14 +71,17 @@ App({
               
               if (isApproved) {
                 console.log('用户已审核通过，自动跳转到工作台');
-                // 将用户信息保存到全局数据
+                // 设置全局数据
                 this.globalData.userInfo = latestUserData;
-                this.globalData.isLoggedIn = true; // 确保设置登录状态
+                this.globalData.isLoggedIn = true;
+                this.globalData.userRole = latestUserData.userRole; // 设置用户角色
                 
-                // 保存诊所信息到全局数据
+                // 如果有诊所信息，也设置到全局数据
                 if (latestUserData.clinicInfo) {
                   this.globalData.clinicInfo = latestUserData.clinicInfo;
                 }
+                
+                console.log('自动登录成功，用户角色:', latestUserData.userRole);
                 
                 // 输出全局数据状态，便于调试
                 console.log('全局数据已设置:', this.globalData);
@@ -99,21 +102,17 @@ App({
                       mask: true
                     });
                     
-                    setTimeout(() => {
-                      wx.hideLoading();
-                      // 根据用户角色跳转到不同页面
-                      if (latestUserData.userRole === 'owner') {
-                        console.log('宠物主人登录，跳转到宠物主人主页');
-                        wx.reLaunch({
-                          url: '/pages/ownerHome/ownerHome'
-                        });
-                      } else {
-                        console.log('兽医登录，跳转到工作台');
-                        wx.reLaunch({
-                          url: '/pages/workbench/workbench'
-                        });
-                      }
-                    }, 1000);
+                    // 先检查是否有双重身份标记
+                    const hasDualRole = wx.getStorageSync('hasDualRole_' + openid);
+                    this.log('AUTH', '自动登录时检查双重身份', { hasDualRole, openid });
+                    
+                    // 强制显示选择对话框，确保用户可以选择身份
+                    if (hasDualRole) {
+                      this._showRoleSelectionDialog(openid);
+                    } else {
+                      // 如果不是双重身份用户，正常处理
+                      this._checkDualRole(latestUserData, openid);
+                    }
                   }, 800);
                 }
               } else {
@@ -141,10 +140,156 @@ App({
       }
     });
   },
+  // 检查用户是否有双重身份，并处理登录跳转
+  _checkDualRole: function(userData, openid) {
+    // 检查是否存在双重身份的标记
+    const hasDualRole = wx.getStorageSync('hasDualRole_' + openid);
+    
+    this.log('AUTH', '检查用户是否有双重身份', { hasDualRole, openid });
+    
+    // 如果用户有双重身份，则使用专用的角色选择对话框
+    if (hasDualRole) {
+      this._showRoleSelectionDialog(openid);
+      return; // 直接返回，避免执行后面的代码
+    }
+    
+    // 检查是否有上次选择的角色
+    const lastRole = wx.getStorageSync('lastRole_' + openid);
+    
+    // 如果有上次选择的角色，使用该角色登录
+    if (lastRole) {
+      this.globalData.userRole = lastRole;
+      this.log('AUTH', '使用上次选择的角色登录', lastRole);
+      
+      // 加载对应角色的用户信息
+      this._loadUserInfoByRole(openid, lastRole);
+    } else {
+      // 否则使用用户数据中的角色
+      this.globalData.userRole = userData.userRole;
+      this.log('AUTH', '使用用户数据中的角色', userData.userRole);
+      
+      // 确保全局数据中的用户信息与角色匹配
+      if (userData.userRole !== 'vet' && this.globalData.userInfo && this.globalData.userInfo.userRole === 'vet') {
+        // 如果当前用户角色不是兽医，但全局数据中的用户信息是兽医，加载正确的用户信息
+        this._loadUserInfoByRole(openid, userData.userRole);
+      }
+    }
+    
+    setTimeout(() => {
+      wx.hideLoading();
+      // 根据用户角色跳转到不同页面
+      if (this.globalData.userRole === 'owner') {
+        this.log('AUTH', '宠物主人登录，跳转到宠物主人主页');
+        wx.reLaunch({
+          url: '/pages/ownerHome/ownerHome'
+        });
+      } else {
+        this.log('AUTH', '兽医登录，跳转到工作台');
+        wx.reLaunch({
+          url: '/pages/workbench/workbench'
+        });
+      }
+    }, 1000);
+  },
+  
+  // 显示角色选择对话框
+  _showRoleSelectionDialog: function(openid) {
+    this.log('AUTH', '显示角色选择对话框');
+    wx.hideLoading();
+    wx.showModal({
+      title: '选择登录身份',
+      content: '您同时拥有兽医和宠物主人身份，请选择登录方式',
+      cancelText: '宠物主人',
+      confirmText: '兽医',
+      success: (res) => {
+        if (res.confirm) {
+          // 选择兽医身份
+          this.globalData.userRole = 'vet';
+          // 保存最后选择的角色
+          wx.setStorageSync('lastRole_' + openid, 'vet');
+          this.log('AUTH', '用户选择以兽医身份登录');
+          
+          // 加载兽医身份的用户信息
+          this._loadUserInfoByRole(openid, 'vet');
+          
+          wx.reLaunch({
+            url: '/pages/workbench/workbench'
+          });
+        } else {
+          // 选择宠物主人身份
+          this.globalData.userRole = 'owner';
+          // 保存最后选择的角色
+          wx.setStorageSync('lastRole_' + openid, 'owner');
+          this.log('AUTH', '用户选择以宠物主人身份登录');
+          
+          // 加载宠物主人身份的用户信息
+          this._loadUserInfoByRole(openid, 'owner');
+          
+          wx.reLaunch({
+            url: '/pages/ownerHome/ownerHome'
+          });
+        }
+      }
+    });
+  },
+  
+  // 根据角色加载用户信息
+  _loadUserInfoByRole: function(openid, role) {
+    this.log('AUTH', '根据角色加载用户信息', { openid, role });
+    
+    // 查询指定角色的用户信息
+    wx.cloud.callFunction({
+      name: 'manageUser',
+      data: {
+        action: 'getUserByRoleAndOpenid',
+        openid: openid,
+        userRole: role
+      },
+      success: res => {
+        if (res.result && res.result.success && res.result.userInfo) {
+          const userInfo = res.result.userInfo;
+          this.log('AUTH', '成功加载用户信息', userInfo);
+          
+          // 更新全局数据
+          this.globalData.userInfo = userInfo;
+          
+          // 更新本地缓存
+          wx.setStorageSync('userInfo', userInfo);
+          wx.setStorageSync('userInfo_' + openid, userInfo);
+        } else {
+          this.log('AUTH', '加载用户信息失败', res);
+        }
+      },
+      fail: err => {
+        this.log('AUTH', '调用云函数加载用户信息失败', err);
+      }
+    });
+  },
+  
+  // 日志控制函数
+  log: function(tag, message, data) {
+    // 设置为true开启日志，false关闭日志
+    const enableLogging = true;
+    // 设置要显示的日志标签，空数组表示显示所有
+    const enabledTags = ['AUTH', 'DUAL_ROLE'];
+    
+    if (!enableLogging) return;
+    
+    // 如果标签列表为空或者包含当前标签，则显示日志
+    if (enabledTags.length === 0 || enabledTags.includes(tag)) {
+      if (data) {
+        console.log(`[${tag}] ${message}`, data);
+      } else {
+        console.log(`[${tag}] ${message}`);
+      }
+    }
+  },
+  
   globalData: {
     userInfo: null,
     isLoggedIn: false,
     openid: null,
+    userRole: null,
     hospitalInfo: null,
     clinicInfo: null
   }

@@ -1,4 +1,4 @@
-/* pages/login/login.wxss */
+dui/* pages/login/login.wxss */
 page {
   background-color: #FFF9F5; /* 淡淡的暖色背景 */
 }

@@ -66,21 +66,19 @@
     </view>
   </view>
   
-  <!-- 操作按钮 -->
-  <view class="action-buttons" wx:if="{{!loading && pet}}">
-    <button class="btn-share" bindtap="shareRecord">
-      <text class="icon">🔗</text>
-      <text>分享记录</text>
-    </button>
-  </view>
+  <!-- 移除了分享按钮 -->
+  <!-- 宠物主人端不需要分享功能 -->
   
   <!-- 记录列表 -->
-  <view class="section-title" wx:if="{{!loading && records.length > 0}}">状态记录</view>
+  <view class="section-title" wx:if="{{!loading && records.length > 0}}">
+    <text class="title-text">宠物动态</text>
+    <view class="title-line"></view>
+  </view>
   <view class="record-list" wx:if="{{!loading && records.length > 0}}">
     <view wx:for="{{records}}" wx:key="id" class="record-item">
       <view class="record-header">
         <text class="record-time">{{item.createdAt}}</text>
-        <text class="record-vet" wx:if="{{item.vetName}}">{{item.vetName}}</text>
+        <text class="record-vet" wx:if="{{item.vetName}}">医生: {{item.vetName}}</text>
       </view>
       <view class="record-content">
         <text>{{item.content}}</text>
@@ -101,10 +99,11 @@
     </view>
   </view>
   
-  <!-- 没有记录 -->
-  <view class="empty-records" wx:if="{{!loading && records.length === 0}}">
-    <view class="empty-icon">📝</view>
-    <view class="empty-text">暂无状态记录</view>
+  <!-- 没有记录时显示 -->
+  <view class="empty-state" wx:if="{{!loading && records.length === 0}}">
+    <view class="empty-icon">🐾</view>
+    <view class="empty-text">还没有宠物动态记录</view>
+    <view class="empty-subtext">医生添加记录后将在这里显示</view>
   </view>
   
   <!-- 返回按钮 -->

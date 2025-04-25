@@ -57,12 +57,15 @@ exports.main = async (event, context) => {
     // 如果提供了主人手机号，则按主人手机号查询（用于宠物主人查看自己的宠物记录）
     if (event.ownerPhone) {
       console.log('根据主人手机号查询:', event.ownerPhone)
-      query['ownerInfo.phoneNumber'] = event.ownerPhone
       
       // 如果是宠物主人查询模式，直接返回该手机号下的所有宠物记录
       if (event.userRole === 'owner') {
-        // 跳过后续的用户角色检查
-        console.log('宠物主人查询模式，直接返回该手机号下的所有宠物记录')
+        // 使用或查询，兼容两种手机号存储方式
+        query['$or'] = [
+          { 'ownerInfo.phoneNumber': event.ownerPhone },
+          { ownerPhone: event.ownerPhone }
+        ];
+        console.log('宠物主人查询模式，使用或查询手机号:', query)
       } else {
         // 继续进行用户角色检查
         const userInfo = await db.collection('users').where({
@@ -246,17 +249,87 @@ exports.main = async (event, context) => {
       const uniqueResults = Array.from(new Set(combinedResults.map(record => record._id)))
         .map(id => combinedResults.find(record => record._id === id))
       
+      // 获取所有宠物记录的诊所ID
+      const clinicIds = uniqueResults
+        .filter(record => record.clinicId)
+        .map(record => record.clinicId);
+      
+      // 去重
+      const uniqueClinicIds = Array.from(new Set(clinicIds));
+      
+      // 查询诊所信息
+      const clinicsData = {};
+      if (uniqueClinicIds.length > 0) {
+        // 由于微信云开发的限制，一次最多查询20条记录，这里分批查询
+        const batchSize = 20;
+        for (let i = 0; i < uniqueClinicIds.length; i += batchSize) {
+          const batchIds = uniqueClinicIds.slice(i, i + batchSize);
+          const clinicsResult = await db.collection('clinics').where({
+            _id: db.command.in(batchIds)
+          }).get();
+          
+          // 将诊所信息按ID存储便于查找
+          clinicsResult.data.forEach(clinic => {
+            clinicsData[clinic._id] = clinic;
+          });
+        }
+      }
+      
+      // 将诊所名称添加到宠物记录中
+      const enrichedResults = uniqueResults.map(record => {
+        const enrichedRecord = { ...record };
+        if (record.clinicId && clinicsData[record.clinicId]) {
+          enrichedRecord.clinicName = clinicsData[record.clinicId].name;
+        }
+        return enrichedRecord;
+      });
+      
       return {
         success: true,
-        petRecords: uniqueResults
+        petRecords: enrichedResults
       }
     } else {
       // 没有搜索关键词，直接查询
       const petRecords = await petRecordsQuery.orderBy('createTime', 'desc').get()
       
+      // 获取所有宠物记录的诊所ID
+      const clinicIds = petRecords.data
+        .filter(record => record.clinicId)
+        .map(record => record.clinicId);
+      
+      // 去重
+      const uniqueClinicIds = Array.from(new Set(clinicIds));
+      
+      // 查询诊所信息
+      const clinicsData = {};
+      if (uniqueClinicIds.length > 0) {
+        // 由于微信云开发的限制，一次最多查询20条记录，这里分批查询
+        const batchSize = 20;
+        for (let i = 0; i < uniqueClinicIds.length; i += batchSize) {
+          const batchIds = uniqueClinicIds.slice(i, i + batchSize);
+          const clinicsResult = await db.collection('clinics').where({
+            _id: db.command.in(batchIds)
+          }).get();
+          
+          // 将诊所信息按ID存储便于查找
+          clinicsResult.data.forEach(clinic => {
+            clinicsData[clinic._id] = clinic;
+          });
+        }
+      }
+      
+      // 将诊所名称添加到宠物记录中
+      const enrichedPetRecords = petRecords.data.map(record => {
+        const enrichedRecord = { ...record };
+        if (record.clinicId && clinicsData[record.clinicId]) {
+          enrichedRecord.clinicName = clinicsData[record.clinicId].name;
+        }
+        return enrichedRecord;
+      });
+      
       return {
         success: true,
-        petRecords: petRecords.data
+        petRecords: enrichedPetRecords
       }
     }
   } catch (err) {

@@ -1,7 +1,7 @@
 /* pages/ownerPetDetail/ownerPetDetail.wxss */
 .container {
   padding: 30rpx;
-  background-color: #f8f8f8;
+  background-color: #f9f5f1;
   min-height: 100vh;
   box-sizing: border-box;
   position: relative;
@@ -20,7 +20,7 @@
   width: 60rpx;
   height: 60rpx;
   border: 4rpx solid #f3f3f3;
-  border-top: 4rpx solid #36cfc9;
+  border-top: 4rpx solid #D4B59E;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 20rpx;
@@ -39,23 +39,25 @@
 /* 宠物信息 */
 .pet-header {
   background-color: white;
-  padding: 30rpx;
-  border-radius: 16rpx;
+  padding: 34rpx;
+  border-radius: 20rpx;
   margin-bottom: 30rpx;
   display: flex;
-  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.08);
+  box-shadow: 0 6rpx 16rpx rgba(209, 172, 143, 0.15);
   position: relative;
-  border-left: 8rpx solid #ff9c6e;
+  border-left: 6rpx solid #D4B59E;
   overflow: hidden;
+  transition: all 0.3s ease;
 }
 
 .pet-avatar {
-  width: 120rpx;
-  height: 120rpx;
-  border-radius: 12rpx;
+  width: 130rpx;
+  height: 130rpx;
+  border-radius: 16rpx;
   overflow: hidden;
-  margin-right: 24rpx;
+  margin-right: 28rpx;
   flex-shrink: 0;
+  box-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.1);
 }
 
 .pet-avatar image {
@@ -67,7 +69,7 @@
 .default-pet-icon {
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #ffcdb2, #ffb4a2);
+  background: linear-gradient(135deg, #D4B59E, #8B5A2B);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -86,10 +88,11 @@
 }
 
 .pet-name {
-  font-size: 36rpx;
+  font-size: 38rpx;
   font-weight: bold;
   color: #333;
   margin-right: 16rpx;
+  letter-spacing: 0.5rpx;
 }
 
 .pet-status {
@@ -97,13 +100,13 @@
   font-size: 24rpx;
   padding: 6rpx 16rpx;
   border-radius: 20rpx;
-  background-color: #f6ffed;
-  color: #52c41a;
+  background-color: #f9f5f1;
+  color: #8B5A2B;
 }
 
 .status-hospitalized {
-  background-color: #e6f7ff;
-  color: #1890ff;
+  background-color: #f3e9df;
+  color: #8B5A2B;
 }
 
 .tags-row {
@@ -116,8 +119,8 @@
   font-size: 24rpx;
   padding: 4rpx 16rpx;
   border-radius: 20rpx;
-  background-color: #fff7e6;
-  color: #fa8c16;
+  background-color: #f3e9df;
+  color: #8B5A2B;
   margin-right: 12rpx;
   margin-bottom: 8rpx;
 }
@@ -161,17 +164,17 @@
   align-items: center;
   justify-content: center;
   border-radius: 44rpx;
-  background: linear-gradient(135deg, #ff9c6e, #ff7875);
+  background: linear-gradient(135deg, #D4B59E, #8B5A2B);
   color: white;
   font-size: 32rpx;
   font-weight: bold;
-  box-shadow: 0 6rpx 16rpx rgba(255, 120, 117, 0.3);
+  box-shadow: 0 6rpx 16rpx rgba(139, 90, 43, 0.3);
   transition: all 0.3s;
 }
 
 .btn-share:active {
   transform: translateY(2rpx);
-  box-shadow: 0 2rpx 8rpx rgba(255, 120, 117, 0.3);
+  box-shadow: 0 2rpx 8rpx rgba(139, 90, 43, 0.3);
 }
 
 .icon {
@@ -181,12 +184,28 @@
 
 /* 记录列表 */
 .section-title {
-  font-size: 32rpx;
-  font-weight: bold;
-  margin-bottom: 20rpx;
-  color: #333;
+  display: flex;
+  align-items: center;
+  margin: 40rpx 0 24rpx;
   position: relative;
-  padding-left: 20rpx;
+  justify-content: left;
+}
+
+.title-text {
+  font-size: 34rpx;
+  font-weight: bold;
+  color: #8B5A2B;
+  padding-right: 20rpx;
+  position: relative;
+  z-index: 1;
+  background: #f9f5f1;
+}
+
+.title-line {
+  flex: 1;
+  height: 2rpx;
+  background: linear-gradient(to right, #D4B59E, transparent);
+  margin-left: 10rpx;
 }
 
 .section-title::before {
@@ -197,26 +216,32 @@
   transform: translateY(-50%);
   width: 8rpx;
   height: 32rpx;
-  background-color: #ff9c6e;
+  background-color: #8B5A2B;
   border-radius: 4rpx;
 }
 
 .record-list {
-  margin-bottom: 30rpx;
+  margin-bottom: 40rpx;
+  width: max-content;
 }
 
 .record-item {
   background-color: white;
-  border-radius: 16rpx;
-  padding: 24rpx;
-  margin-bottom: 20rpx;
-  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.05);
+  padding: 28rpx;
+  border-radius: 20rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 4rpx 12rpx rgba(209, 172, 143, 0.12);
+  border-left: 4rpx solid #D4B59E;
+  transition: all 0.3s ease;
 }
 
 .record-header {
   display: flex;
   justify-content: space-between;
   margin-bottom: 16rpx;
+  font-size: 24rpx;
+  color: #8B5A2B;
+  opacity: 0.8;
 }
 
 .record-time {
@@ -226,15 +251,19 @@
 
 .record-vet {
   font-size: 26rpx;
-  color: #36cfc9;
+  color: #8B5A2B;
   font-weight: 500;
+  background-color: #f9f5f1;
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
 }
 
 .record-content {
   font-size: 28rpx;
+  line-height: 1.7;
   color: #333;
-  line-height: 1.6;
-  margin-bottom: 16rpx;
+  margin-bottom: 20rpx;
+  letter-spacing: 0.3rpx;
 }
 
 .record-images {
@@ -244,11 +273,14 @@
 }
 
 .record-image-item {
-  width: calc((100% - 48rpx) / 3);
-  height: 180rpx;
-  margin: 0 8rpx 16rpx;
-  border-radius: 8rpx;
+  width: 210rpx;
+  height: 210rpx;
+  margin-right: 12rpx;
+  margin-bottom: 12rpx;
+  border-radius: 12rpx;
   overflow: hidden;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
 }
 
 .record-image-item image {
@@ -257,43 +289,64 @@
   object-fit: cover;
 }
 
+.record-image-item:active image {
+  transform: scale(0.97);
+}
+
 /* 空记录状态 */
-.empty-records {
+.empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 80rpx 0;
+  color: #8B5A2B;
 }
 
 .empty-icon {
-  font-size: 80rpx;
-  color: #ddd;
-  margin-bottom: 20rpx;
+  font-size: 90rpx;
+  margin-bottom: 24rpx;
+  opacity: 0.7;
 }
 
 .empty-text {
-  font-size: 28rpx;
-  color: #999;
+  font-size: 30rpx;
+  font-weight: 500;
+  margin-bottom: 12rpx;
+  color: #8B5A2B;
+}
+
+.empty-subtext {
+  font-size: 26rpx;
+  color: #D4B59E;
+  text-align: center;
+  max-width: 80%;
 }
 
 /* 返回按钮 */
 .back-button {
   position: fixed;
   bottom: 60rpx;
-  right: 60rpx;
-  width: 100rpx;
-  height: 100rpx;
+  right: 40rpx;
+  width: 110rpx;
+  height: 110rpx;
+  background: linear-gradient(135deg, #D4B59E, #8B5A2B);
   border-radius: 50%;
-  background: linear-gradient(135deg, #36cfc9, #22a39f);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4rpx 16rpx rgba(54, 207, 201, 0.3);
-  z-index: 10;
+  box-shadow: 0 6rpx 20rpx rgba(209, 172, 143, 0.3);
+  z-index: 100;
+  transition: all 0.3s ease;
+}
+
+.back-button:active {
+  transform: scale(0.95);
+  box-shadow: 0 3rpx 10rpx rgba(209, 172, 143, 0.2);
 }
 
 .back-icon {
-  font-size: 48rpx;
+  font-size: 54rpx;
   color: white;
+  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.1);
 }

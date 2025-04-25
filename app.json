@@ -1,14 +1,14 @@
 {
   "pages": [
     "pages/login/login",
+    "pages/ownerHome/ownerHome",
+    "pages/ownerPetDetail/ownerPetDetail",
     "pages/workbench/workbench",
     "pages/petList/petList",
     "pages/petDetail/petDetail",
     "pages/createPetRecord/createPetRecord",
     "pages/addRecord/addRecord",
-    "pages/devTools/devTools",
-    "pages/ownerHome/ownerHome",
-    "pages/ownerPetDetail/ownerPetDetail"
+    "pages/devTools/devTools"
   ],
   "window": {
     "backgroundTextStyle": "light",

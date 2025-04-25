@@ -3,32 +3,27 @@
   <!-- 头部区域 -->
   <view class="header">
     <view class="user-info">
-      <view class="avatar">
-        <text class="avatar-text">{{ownerInfo.name ? ownerInfo.name.substring(0,1) : '主'}}</text>
+      <!-- 如果有头像显示头像，否则显示默认头像 -->
+      <view class="avatar" wx:if="{{!hasUserInfo}}" bindtap="getUserProfile">
+        <text class="avatar-text">点击</text>
+      </view>
+      <view class="avatar" wx:else>
+        <image wx:if="{{userInfo.avatarUrl}}" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
+        <text wx:else class="avatar-text">{{userInfo.nickName ? userInfo.nickName.substring(0,1) : '主'}}</text>
       </view>
       <view class="user-details">
-        <view class="user-name">{{ownerInfo.name || '宠物主人'}}</view>
+        <!-- 如果没有用户信息，显示获取按钮 -->
+        <view class="user-name" wx:if="{{!hasUserInfo}}" bindtap="getUserProfile">点击获取微信信息</view>
+        <view class="user-name" wx:else>{{userInfo.nickName || '宠物主人'}}</view>
         <view class="user-phone">{{ownerInfo.phone || '未设置手机号'}}</view>
       </view>
     </view>
     <view class="logout-btn" bindtap="logout">退出登录</view>
   </view>
   
-  <!-- 搜索区域 -->
-  <view class="search-section">
-    <view class="search-box">
-      <icon type="search" size="16" color="#999"></icon>
-      <input 
-        class="search-input" 
-        placeholder="搜索宠物名称" 
-        confirm-type="search"
-        value="{{searchValue}}"
-        bindinput="onSearch"
-      />
-      <view class="clear-btn" bindtap="clearSearch" wx:if="{{searchValue}}">
-        <icon type="clear" size="16" color="#999"></icon>
-      </view>
-    </view>
+  <!-- 标题区域 -->
+  <view class="title-section">
+    <text class="page-title">我的宠物</text>
   </view>
   
   <!-- 加载中 -->
@@ -66,17 +61,26 @@
           </view>
         </view>
         
-        <view class="pet-tags" wx:if="{{item.tags && item.tags.length > 0}}">
-          <view class="pet-tag" wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this">{{tag}}</view>
-        </view>
-        
         <view class="pet-info-row">
           <text class="pet-breed" wx:if="{{item.petInfo.breed}}">{{item.petInfo.breed}}</text>
           <text class="pet-reason" wx:if="{{item.reason}}">{{item.reason}}</text>
         </view>
         
-        <view class="pet-clinic" wx:if="{{item.clinicName}}">
-          <text class="clinic-name">{{item.clinicName}}</text>
+        <view class="pet-hospital-row">
+          <view class="pet-clinic" wx:if="{{item.clinicName}}">
+            <text class="clinic-icon">🏥</text>
+            <text class="clinic-name">{{item.clinicName}}</text>
+          </view>
+        </view>
+        
+        <view class="pet-update" wx:if="{{item.updates && item.updates.length > 0}}">
+          <view class="update-row">
+            <text class="update-icon">📝</text>
+            <text class="update-text">最新更新: {{item.updateTimeAgo}}</text>
+          </view>
+          <view class="update-time">
+            {{item.updateTimeFormatted}}
+          </view>
         </view>
       </view>
       

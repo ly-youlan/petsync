@@ -190,12 +190,16 @@ Page({
                     // 设置登录状态
                     app.globalData.isLoggedIn = true;
                     app.globalData.userInfo = userInfo;
+                    app.globalData.userRole = 'vet';
                     
                     // 诊所信息已经在云函数中关联到用户
                     // 如果有clinicInfo，则使用它
                     if (userInfo.clinicInfo) {
                       app.globalData.clinicInfo = userInfo.clinicInfo;
                     }
+                    
+                    // 检查用户是否已经有宠物主人身份
+                    this._checkExistingOwnerRole(openid, userInfo);
                     
                     // 根据审核状态决定跳转页面
                     this.handleVetApprovalStatus(userInfo, openid);
@@ -384,6 +388,54 @@ Page({
     });
   },
   
+  // 检查用户是否已经有兽医身份
+  _checkExistingVetRole: function(openid, userInfo) {
+    const app = getApp();
+    app.log('DUAL_ROLE', '检查用户是否已有兽医身份', openid);
+    // 查询云数据库中是否有该openid的兽医记录
+    const db = wx.cloud.database();
+    db.collection('users').where({
+      openid: openid,
+      userRole: 'vet'
+    }).get({
+      success: res => {
+        app.log('DUAL_ROLE', '检查兽医身份结果', res);
+        if (res.data && res.data.length > 0) {
+          app.log('DUAL_ROLE', '该用户已有兽医身份，标记为双重身份用户');
+          // 标记用户有双重身份
+          wx.setStorageSync('hasDualRole_' + openid, true);
+        }
+      },
+      fail: err => {
+        app.log('DUAL_ROLE', '检查兽医身份失败', err);
+      }
+    });
+  },
+  
+  // 检查用户是否已经有宠物主人身份
+  _checkExistingOwnerRole: function(openid, userInfo) {
+    const app = getApp();
+    app.log('DUAL_ROLE', '检查用户是否已有宠物主人身份', openid);
+    // 查询云数据库中是否有该openid的宠物主人记录
+    const db = wx.cloud.database();
+    db.collection('users').where({
+      openid: openid,
+      userRole: 'owner'
+    }).get({
+      success: res => {
+        app.log('DUAL_ROLE', '检查宠物主人身份结果', res);
+        if (res.data && res.data.length > 0) {
+          app.log('DUAL_ROLE', '该用户已有宠物主人身份，标记为双重身份用户');
+          // 标记用户有双重身份
+          wx.setStorageSync('hasDualRole_' + openid, true);
+        }
+      },
+      fail: err => {
+        app.log('DUAL_ROLE', '检查宠物主人身份失败', err);
+      }
+    });
+  },
+
   // 宠物主人登录
   ownerLogin: function() {
     // 验证表单字段
@@ -435,74 +487,132 @@ Page({
             // 创建用户信息
             const userData = {
               ownerPhone: this.data.ownerPhone,
+              phoneNumber: this.data.ownerPhone,
               userRole: 'owner'
             };
             
-            // 调用云函数存储用户信息
+            // 先检查是否已经有宠物主人身份的用户
             wx.cloud.callFunction({
               name: 'manageUser',
               data: {
-                action: 'createUser',
-                userData: userData
+                action: 'getUserByRoleAndOpenid',
+                openid: openid,
+                userRole: 'owner'
               },
-              success: userRes => {
-                console.log('创建用户成功', userRes);
+              success: ownerRes => {
+                console.log('检查宠物主人身份结果', ownerRes);
                 
-                if (!userRes.result.success) {
-                  // 用户已存在，获取现有用户信息
-                  if (userRes.result.existingUser) {
-                    const userInfo = userRes.result.existingUser;
-                    
-                    // 设置登录状态
-                    app.globalData.isLoggedIn = true;
-                    app.globalData.userInfo = userInfo;
-                    app.globalData.userRole = 'owner';
-                    
-                    // 跳转到宠物主人页面
-                    wx.reLaunch({
-                      url: '/pages/ownerHome/ownerHome'
+                let userInfo = null;
+                
+                if (ownerRes.result && ownerRes.result.success && ownerRes.result.userInfo) {
+                  // 已有宠物主人身份，直接使用
+                  userInfo = ownerRes.result.userInfo;
+                  
+                  // 更新手机号，确保手机号正确
+                  if (userInfo.ownerPhone !== this.data.ownerPhone || userInfo.phoneNumber !== this.data.ownerPhone) {
+                    // 更新用户手机号
+                    wx.cloud.callFunction({
+                      name: 'manageUser',
+                      data: {
+                        action: 'updateUser',
+                        userData: {
+                          ownerPhone: this.data.ownerPhone,
+                          phoneNumber: this.data.ownerPhone
+                        }
+                      }
                     });
-                    return;
+                    
+                    // 同时更新本地用户信息
+                    userInfo.ownerPhone = this.data.ownerPhone;
+                    userInfo.phoneNumber = this.data.ownerPhone;
                   }
                   
-                  wx.showToast({
-                    title: userRes.result.errMsg || '创建用户失败',
-                    icon: 'none'
+                  this._finishOwnerLogin(openid, userInfo);
+                } else {
+                  // 如果没有宠物主人身份，创建新用户
+                  wx.cloud.callFunction({
+                    name: 'manageUser',
+                    data: {
+                      action: 'createUser',
+                      userData: userData
+                    },
+                    success: createRes => {
+                      if (createRes.result && createRes.result.success) {
+                        userInfo = createRes.result.userInfo;
+                        console.log('创建新的宠物主人用户成功', userInfo);
+                      } else if (createRes.result && createRes.result.existingUser) {
+                        userInfo = createRes.result.existingUser;
+                        console.log('使用现有用户', userInfo);
+                      }
+                      
+                      if (userInfo) {
+                        this._finishOwnerLogin(openid, userInfo);
+                      } else {
+                        wx.showToast({
+                          title: '创建用户失败',
+                          icon: 'none'
+                        });
+                        this.setData({ isLoading: false });
+                      }
+                    },
+                    fail: err => {
+                      console.error('创建用户失败', err);
+                      wx.showToast({
+                        title: '登录失败，请重试',
+                        icon: 'none'
+                      });
+                      this.setData({ isLoading: false });
+                    }
                   });
-                  return;
                 }
-                
-                // 创建成功，获取用户信息
-                const userInfo = userRes.result.userInfo;
-                
-                // 存储到本地缓存
-                wx.setStorageSync('userInfo', userInfo);
-                wx.setStorageSync('userInfo_' + openid, userInfo);
-                
-                // 设置登录状态
-                app.globalData.isLoggedIn = true;
-                app.globalData.userInfo = userInfo;
-                app.globalData.userRole = 'owner';
-                
-                // 跳转到宠物主人页面
-                wx.reLaunch({
-                  url: '/pages/ownerHome/ownerHome'
-                });
               },
               fail: err => {
-                console.error('创建用户失败', err);
-                wx.showToast({
-                  title: '登录失败，请重试',
-                  icon: 'none'
+                console.error('检查宠物主人身份失败', err);
+                
+                // 如果检查失败，尝试直接创建用户
+                wx.cloud.callFunction({
+                  name: 'manageUser',
+                  data: {
+                    action: 'createUser',
+                    userData: userData
+                  },
+                  success: userRes => {
+                    console.log('创建用户成功', userRes);
+                    
+                    let userInfo = null;
+                    
+                    if (userRes.result && userRes.result.success) {
+                      userInfo = userRes.result.userInfo;
+                    } else if (userRes.result && userRes.result.existingUser) {
+                      userInfo = userRes.result.existingUser;
+                    } else {
+                      wx.showToast({
+                        title: userRes.result && userRes.result.errMsg || '创建用户失败',
+                        icon: 'none'
+                      });
+                      this.setData({ isLoading: false });
+                      return;
+                    }
+                    
+                    this._finishOwnerLogin(openid, userInfo);
+                  },
+                  fail: err => {
+                    console.error('创建用户失败', err);
+                    wx.showToast({
+                      title: '登录失败，请重试',
+                      icon: 'none'
+                    });
+                    this.setData({ isLoading: false });
+                  }
                 });
               },
               complete: () => {
-                this.setData({ isLoading: false });
+                // 在完成回调中不设置 isLoading，因为可能还有其他异步操作
               }
             });
           },
           fail: err => {
-            console.error('云函数调用失败', err);
+            console.error('获取openid失败', err);
             wx.showToast({
               title: '登录失败，请重试',
               icon: 'none'
@@ -512,7 +622,7 @@ Page({
         });
       },
       fail: err => {
-        console.error('wx.login 失败', err);
+        console.error('wx.login失败', err);
         wx.showToast({
           title: '登录失败，请重试',
           icon: 'none'
@@ -520,6 +630,32 @@ Page({
         this.setData({ isLoading: false });
       }
     });
+  },
+  
+  // 完成宠物主人登录流程
+  _finishOwnerLogin: function(openid, userInfo) {
+    const app = getApp();
+    
+    // 设置登录状态
+    app.globalData.isLoggedIn = true;
+    app.globalData.userInfo = userInfo;
+    app.globalData.userRole = 'owner';
+    
+    // 存储到本地缓存，确保下次能自动登录
+    wx.setStorageSync('userInfo', userInfo);
+    wx.setStorageSync('userInfo_' + openid, userInfo);
+    
+    console.log('宠物主人登录成功，用户信息已保存到本地存储');
+    
+    // 检查用户是否已经有兽医身份
+    this._checkExistingVetRole(openid, userInfo);
+    
+    // 跳转到宠物主人页面
+    wx.reLaunch({
+      url: '/pages/ownerHome/ownerHome'
+    });
+    
+    this.setData({ isLoading: false });
   },
   
   // 开发环境宠物主人直接登录

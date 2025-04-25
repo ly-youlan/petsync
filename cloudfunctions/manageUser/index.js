@@ -34,6 +34,8 @@ exports.main = async (event, context) => {
         return await approveVet(userData.targetOpenid || wxContext.OPENID)
       case 'getClinicByCode':
         return await getClinicByCode(event.clinicCode)
+      case 'getUserByRoleAndOpenid':
+        return await getUserByRoleAndOpenid(event.openid, event.userRole)
       default:
         return {
           success: false,
@@ -192,6 +194,84 @@ async function getClinicByCode(clinicCode) {
       success: false,
       errMsg: `获取诊所信息失败: ${err.message || err.errMsg || '未知错误'}`
     }
+  }
+}
+
+// 根据角色和openid获取用户信息
+async function getUserByRoleAndOpenid(openid, userRole) {
+  console.log('根据角色和openid获取用户信息:', { openid, userRole });
+  
+  if (!openid || !userRole) {
+    return {
+      success: false,
+      errMsg: '缺少openid或userRole'
+    };
+  }
+  
+  try {
+    // 查询指定角色的用户信息
+    const result = await userCollection.where({
+      openid: openid,
+      userRole: userRole
+    }).get();
+    
+    if (result.data.length === 0) {
+      // 如果没有找到指定角色的用户，创建一个新的用户信息
+      if (userRole === 'owner') {
+        // 如果是宠物主人角色，创建一个基本的宠物主人用户
+        // 首先查询用户的其他信息，如手机号
+        const anyUser = await userCollection.where({
+          openid: openid
+        }).get();
+        
+        let phoneNumber = '';
+        if (anyUser.data.length > 0) {
+          // 从现有用户信息中提取手机号
+          phoneNumber = anyUser.data[0].phoneNumber || anyUser.data[0].ownerPhone || '';
+        }
+        
+        // 创建新的宠物主人用户
+        const newOwner = {
+          openid: openid,
+          userRole: 'owner',
+          ownerPhone: phoneNumber,
+          phoneNumber: phoneNumber,
+          createTime: db.serverDate(),
+          updateTime: db.serverDate()
+        };
+        
+        // 添加到数据库
+        const addResult = await userCollection.add({
+          data: newOwner
+        });
+        
+        console.log('创建新的宠物主人用户:', newOwner);
+        
+        return {
+          success: true,
+          userInfo: {
+            ...newOwner,
+            _id: addResult._id
+          }
+        };
+      }
+      
+      return {
+        success: false,
+        errMsg: '未找到指定角色的用户信息'
+      };
+    }
+    
+    return {
+      success: true,
+      userInfo: result.data[0]
+    };
+  } catch (err) {
+    console.error('获取用户信息失败:', err);
+    return {
+      success: false,
+      errMsg: `获取用户信息失败: ${err.message || err.errMsg || '未知错误'}`
+    };
   }
 }
 
