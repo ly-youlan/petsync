@@ -288,8 +288,9 @@ App({
   globalData: {
     userInfo: null,
     isLoggedIn: false,
-    openid: null,
-    userRole: null,
+    openid: '',
+    userRole: '',
+    previewClinicName: '', // 用于图片预览时显示诊所名称
     hospitalInfo: null,
     clinicInfo: null
   }

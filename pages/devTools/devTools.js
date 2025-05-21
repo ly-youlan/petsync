@@ -1,73 +1,66 @@
 // pages/devTools/devTools.js
 Page({
+
+  /**
+   * 页面的初始数据
+   */
   data: {
-    userInfo: null,
-    isApproved: false
+
   },
 
-  onLoad: function() {
-    this.loadUserInfo();
+  /**
+   * 生命周期函数--监听页面加载
+   */
+  onLoad(options) {
+
   },
 
-  loadUserInfo: function() {
-    // 获取用户信息
-    const userInfo = wx.getStorageSync('userInfo');
-    if (userInfo) {
-      this.setData({
-        userInfo: userInfo,
-        isApproved: userInfo.isApproved || false
-      });
-    } else {
-      wx.showToast({
-        title: '未找到用户信息',
-        icon: 'none'
-      });
-    }
+  /**
+   * 生命周期函数--监听页面初次渲染完成
+   */
+  onReady() {
+
   },
 
-  toggleApproval: function() {
-    const userInfo = this.data.userInfo;
-    if (!userInfo) return;
+  /**
+   * 生命周期函数--监听页面显示
+   */
+  onShow() {
 
-    // 切换审核状态
-    userInfo.isApproved = !userInfo.isApproved;
-    
-    // 保存到本地存储
-    wx.setStorageSync('userInfo', userInfo);
-    
-    this.setData({
-      userInfo: userInfo,
-      isApproved: userInfo.isApproved
-    });
-    
-    wx.showToast({
-      title: userInfo.isApproved ? '已审核通过' : '已取消审核',
-      icon: 'success'
-    });
   },
 
-  clearStorage: function() {
-    wx.showModal({
-      title: '确认清除',
-      content: '确定要清除所有本地存储数据吗？',
-      success: (res) => {
-        if (res.confirm) {
-          wx.clearStorageSync();
-          wx.showToast({
-            title: '已清除所有数据',
-            icon: 'success'
-          });
-          setTimeout(() => {
-            wx.reLaunch({
-              url: '/pages/login/login'
-            });
-          }, 1500);
-        }
-      }
-    });
+  /**
+   * 生命周期函数--监听页面隐藏
+   */
+  onHide() {
+
   },
 
-  navigateBack: function() {
-    wx.navigateBack();
+  /**
+   * 生命周期函数--监听页面卸载
+   */
+  onUnload() {
+
+  },
+
+  /**
+   * 页面相关事件处理函数--监听用户下拉动作
+   */
+  onPullDownRefresh() {
+
+  },
+
+  /**
+   * 页面上拉触底事件的处理函数
+   */
+  onReachBottom() {
+
+  },
+
+  /**
+   * 用户点击右上角分享
+   */
+  onShareAppMessage() {
+
   }
 })

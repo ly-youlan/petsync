@@ -12,7 +12,7 @@
   <!-- 角色选择 -->
   <view class="role-selector">
     <view class="role-option {{userRole === 'vet' ? 'active' : ''}}" bindtap="selectRole" data-role="vet">
-      <mp-icon icon="help" color="{{userRole === 'vet' ? '#8B5A2B' : '#D4B59E'}}" size="{{30}}"></mp-icon>
+      <mp-icon icon="like" color="{{userRole === 'vet' ? '#8B5A2B' : '#D4B59E'}}" size="{{30}}"></mp-icon>
       <text>我是兽医</text>
     </view>
     <view class="role-option {{userRole === 'owner' ? 'active' : ''}}" bindtap="selectRole" data-role="owner">

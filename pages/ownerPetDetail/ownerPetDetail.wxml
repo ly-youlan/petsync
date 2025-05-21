@@ -27,10 +27,8 @@
         </view>
       </view>
       
-      <!-- 标签 -->
-      <view class="tags-row" wx:if="{{pet.tags && pet.tags.length > 0}}">
-        <view class="pet-tag" wx:for="{{pet.tags}}" wx:key="*this">{{item}}</view>
-      </view>
+      <!-- 标签已隐藏 -->
+      <!-- 根据需求隐藏宠物标签 -->
       
       <!-- 宠物品种 -->
       <view class="info-row">
@@ -77,7 +75,9 @@
   <view class="record-list" wx:if="{{!loading && records.length > 0}}">
     <view wx:for="{{records}}" wx:key="id" class="record-item">
       <view class="record-header">
-        <text class="record-time">{{item.createdAt}}</text>
+        <view class="record-time-container">
+          <text class="record-time">{{item.createdAt}}</text>
+        </view>
         <text class="record-vet" wx:if="{{item.vetName}}">医生: {{item.vetName}}</text>
       </view>
       <view class="record-content">
@@ -88,26 +88,58 @@
           class="record-image-item" 
           wx:for="{{item.images}}" 
           wx:for-item="image" 
+          wx:for-index="imageIndex"
           wx:key="*this"
           bindtap="previewImage"
           data-src="{{image}}"
           data-urls="{{item.images}}"
+          data-index="{{imageIndex}}"
+          data-clinic="{{pet.clinicName}}"
         >
           <image src="{{image}}" mode="aspectFill"></image>
+          <!-- 水印直接叠加在图片上 -->
+          <view class="image-watermark" wx:if="{{pet.clinicName}}">
+            <text>{{pet.clinicName}}</text>
+          </view>
+          <view class="image-zoom-hint">
+            <text class="zoom-icon">+</text>
+          </view>
         </view>
       </view>
     </view>
   </view>
   
   <!-- 没有记录时显示 -->
-  <view class="empty-state" wx:if="{{!loading && records.length === 0}}">
+  <view class="empty-state" wx:if="{{!loading && emptyState}}">
     <view class="empty-icon">🐾</view>
     <view class="empty-text">还没有宠物动态记录</view>
     <view class="empty-subtext">医生添加记录后将在这里显示</view>
+    <view class="refresh-button" bindtap="loadPetDetail">刷新</view>
+  </view>
+  
+  <!-- 下拉刷新提示 -->
+  <view class="refresh-tip" wx:if="{{!loading && !emptyState && records.length > 0}}">
+    <text>下拉可刷新宠物动态</text>
   </view>
   
   <!-- 返回按钮 -->
   <view class="back-button" bindtap="navigateBack">
     <text class="back-icon">←</text>
+  </view>
+  
+  <!-- 自定义图片预览组件 -->
+  <view class="custom-preview" wx:if="{{showCustomPreview}}" bindtap="closeCustomPreview">
+    <swiper class="preview-swiper" current="{{currentPreviewIndex}}" bindchange="previewSwiperChange">
+      <swiper-item wx:for="{{previewImages}}" wx:key="*this">
+        <view class="preview-image-container">
+          <image src="{{item}}" mode="aspectFit" class="preview-image"></image>
+          <!-- 水印始终显示在预览图片上 -->
+          <view class="preview-watermark" wx:if="{{pet.clinicName}}">
+            <text>{{pet.clinicName}}</text>
+          </view>
+        </view>
+      </swiper-item>
+    </swiper>
+    <view class="preview-counter">{{currentPreviewIndex + 1}}/{{previewImages.length}}</view>
   </view>
 </view>

@@ -243,6 +243,7 @@ Page({
       name: 'getPetRecords',
       data: {
         openid: openid,
+        userRole: 'vet', // 添加用户角色参数，指定为兽医
         clinicId: clinicInfo ? clinicInfo._id : null,
         filter: this.data.selectedFilters.includes('全部') ? null : this.data.selectedFilters,
         searchValue: this.data.searchValue || null
