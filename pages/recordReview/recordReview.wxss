@@ -1,0 +1,336 @@
+/* pages/recordReview/recordReview.wxss */
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f9f5f1;
+}
+
+/* 页面标题样式 */
+.header {
+  background: linear-gradient(to right, #D4B59E, #8B5A2B);
+  padding: 20rpx 30rpx;
+  color: #fff;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  padding: 10rpx 0;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: bold;
+  margin-bottom: 4rpx;
+}
+
+.subtitle {
+  font-size: 26rpx;
+  opacity: 0.9;
+}
+
+/* 加载中样式 */
+.loading-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading {
+  text-align: center;
+}
+
+.loading-icon {
+  display: inline-block;
+  width: 60rpx;
+  height: 60rpx;
+  border: 6rpx solid #D4B59E;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  margin-top: 20rpx;
+  font-size: 28rpx;
+  color: #8B5A2B;
+}
+
+/* 审核容器 */
+.review-container {
+  flex: 1;
+  padding: 20rpx;
+  overflow-y: auto;
+}
+
+/* 卡片通用样式 */
+.pet-info-card, .staff-info-card, .record-card, .image-card, .form-card, .history-card {
+  background-color: #fff;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.card-title {
+  font-size: 28rpx;
+  color: #8B5A2B;
+  font-weight: bold;
+  margin-bottom: 16rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+  padding-bottom: 10rpx;
+}
+
+/* 宠物信息样式 */
+.pet-info-card {
+  display: flex;
+  align-items: center;
+}
+
+.pet-avatar, .staff-avatar {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 20rpx;
+  background-color: #FFF5E6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pet-avatar image, .staff-avatar image {
+  width: 100%;
+  height: 100%;
+}
+
+.default-avatar {
+  font-size: 50rpx;
+  color: #A67C52;
+}
+
+.pet-details, .staff-details {
+  flex: 1;
+}
+
+.pet-name, .staff-name {
+  font-size: 32rpx;
+  color: #333;
+  font-weight: bold;
+}
+
+.pet-breed {
+  font-size: 26rpx;
+  color: #999;
+  margin-top: 4rpx;
+}
+
+.status-badge {
+  font-size: 24rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 20rpx;
+}
+
+.status-badge.submitted {
+  background-color: rgba(24, 144, 255, 0.1);
+  color: #1890ff;
+}
+
+.status-badge.approved {
+  background-color: rgba(82, 196, 26, 0.1);
+  color: #52c41a;
+}
+
+.status-badge.rejected {
+  background-color: rgba(255, 77, 79, 0.1);
+  color: #ff4d4f;
+}
+
+.status-badge.completed {
+  background-color: rgba(144, 147, 153, 0.1);
+  color: #909399;
+}
+
+/* 医护人员信息样式 */
+.staff-info {
+  display: flex;
+  align-items: center;
+}
+
+.submit-time {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 8rpx;
+}
+
+/* 记录内容样式 */
+.record-content {
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.6;
+  padding: 10rpx 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* 图片展示样式 */
+.image-grid {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -10rpx;
+}
+
+.image-item {
+  width: calc(33.33% - 20rpx);
+  margin: 10rpx;
+  position: relative;
+  height: 200rpx;
+}
+
+.preview-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 8rpx;
+}
+
+/* 审核表单样式 */
+.textarea-container {
+  position: relative;
+  margin-bottom: 10rpx;
+}
+
+.comments-textarea {
+  width: 100%;
+  height: 200rpx;
+  padding: 20rpx;
+  box-sizing: border-box;
+  font-size: 28rpx;
+  line-height: 1.5;
+  border: 1rpx solid #eee;
+  border-radius: 8rpx;
+  background-color: #f9f9f9;
+}
+
+.character-count {
+  position: absolute;
+  bottom: 10rpx;
+  right: 20rpx;
+  font-size: 24rpx;
+  color: #999;
+}
+
+.tip-text {
+  font-size: 24rpx;
+  color: #ff9800;
+  margin-top: 10rpx;
+}
+
+/* 审核按钮样式 */
+.action-buttons {
+  display: flex;
+  margin-bottom: 20rpx;
+}
+
+.reject-btn, .approve-btn {
+  flex: 1;
+  margin: 0 10rpx;
+  font-size: 28rpx;
+  padding: 16rpx 0;
+  border-radius: 40rpx;
+}
+
+.reject-btn {
+  background-color: #fff;
+  color: #ff4d4f;
+  border: 1rpx solid #ff4d4f;
+}
+
+.approve-btn {
+  background: linear-gradient(to right, #52c41a, #389e0d);
+  color: #fff;
+}
+
+.reject-btn[disabled], .approve-btn[disabled] {
+  background: #cccccc;
+  color: #ffffff;
+  border: none;
+}
+
+/* 历史审核记录样式 */
+.history-content {
+  padding: 10rpx 0;
+}
+
+.history-status {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.approved-text {
+  color: #52c41a;
+  font-weight: bold;
+}
+
+.rejected-text {
+  color: #ff4d4f;
+  font-weight: bold;
+}
+
+.history-time {
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 16rpx;
+}
+
+.history-comments {
+  background-color: #f9f9f9;
+  padding: 16rpx;
+  border-radius: 8rpx;
+}
+
+.comments-title {
+  font-size: 24rpx;
+  color: #8B5A2B;
+  font-weight: bold;
+  margin-bottom: 8rpx;
+}
+
+.comments-content {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* 底部操作栏 */
+.footer {
+  display: flex;
+  margin-top: 20rpx;
+}
+
+.back-btn, .detail-btn {
+  flex: 1;
+  margin: 0 10rpx;
+  font-size: 28rpx;
+  padding: 16rpx 0;
+  border-radius: 40rpx;
+}
+
+.back-btn {
+  background-color: #f0f0f0;
+  color: #666;
+}
+
+.detail-btn {
+  background-color: #FFF5E6;
+  color: #8B5A2B;
+  border: 1rpx solid #D4B59E;
+}

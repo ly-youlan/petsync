@@ -15,6 +15,10 @@
       <mp-icon icon="like" color="{{userRole === 'vet' ? '#8B5A2B' : '#D4B59E'}}" size="{{30}}"></mp-icon>
       <text>我是兽医</text>
     </view>
+    <view class="role-option {{userRole === 'staff' ? 'active' : ''}}" bindtap="selectRole" data-role="staff">
+      <mp-icon icon="group" color="{{userRole === 'staff' ? '#8B5A2B' : '#D4B59E'}}" size="{{30}}"></mp-icon>
+      <text>我是医护</text>
+    </view>
     <view class="role-option {{userRole === 'owner' ? 'active' : ''}}" bindtap="selectRole" data-role="owner">
       <mp-icon icon="like" color="{{userRole === 'owner' ? '#8B5A2B' : '#D4B59E'}}" size="{{30}}"></mp-icon>
       <text>我是宠物主人</text>
@@ -34,6 +38,24 @@
     </button>
     
     <button class="btn-dev" bindtap="devLogin">
+      <mp-icon icon="info" color="#ffffff" size="{{18}}"></mp-icon>
+      <text>开发环境登录</text>
+    </button>
+  </view>
+  
+  <!-- 医护登录表单 -->
+  <view class="login-form" wx:if="{{userRole === 'staff'}}">
+    <view class="form-title">医护登录</view>
+    
+    <input class="input-field" placeholder="请输入医院邀请码" bindinput="inputHospitalCode" />
+    <input class="input-field" placeholder="请输入医护姓名" bindinput="inputStaffName" />
+    
+    <button class="btn-login" bindtap="staffLogin">
+      <mp-icon icon="done" color="#ffffff" size="{{20}}"></mp-icon>
+      <text>登录</text>
+    </button>
+    
+    <button class="btn-dev" bindtap="devLoginAsStaff">
       <mp-icon icon="info" color="#ffffff" size="{{18}}"></mp-icon>
       <text>开发环境登录</text>
     </button>

@@ -1,0 +1,122 @@
+<!-- pages/recordReview/recordReview.wxml -->
+<view class="container">
+  <!-- 页面标题 -->
+  <view class="header">
+    <view class="header-content">
+      <view class="title">审核记录</view>
+      <view class="subtitle" wx:if="{{assignment}}">{{assignment.petInfo.name}}</view>
+    </view>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="loading-container" wx:if="{{loading}}">
+    <view class="loading">
+      <view class="loading-icon"></view>
+      <view class="loading-text">加载中...</view>
+    </view>
+  </view>
+
+  <!-- 审核内容 -->
+  <view class="review-container" wx:else>
+    <!-- 宠物信息 -->
+    <view class="pet-info-card">
+      <view class="pet-avatar">
+        <image wx:if="{{assignment.petInfo.avatarUrl}}" src="{{assignment.petInfo.avatarUrl}}" mode="aspectFill"></image>
+        <view wx:else class="default-avatar">🐈</view>
+      </view>
+      <view class="pet-details">
+        <view class="pet-name">{{assignment.petInfo.name}}</view>
+        <view class="pet-breed">{{assignment.petInfo.breed || '未知品种'}}</view>
+      </view>
+      <view class="status-badge {{assignment.status}}">
+        {{assignment.status === 'submitted' ? '待审核' : 
+          assignment.status === 'approved' ? '已通过' : 
+          assignment.status === 'rejected' ? '已退回' : 
+          assignment.status === 'completed' ? '已完成' : '未知状态'}}
+      </view>
+    </view>
+
+    <!-- 医护人员信息 -->
+    <view class="staff-info-card">
+      <view class="card-title">医护人员</view>
+      <view class="staff-info">
+        <view class="staff-avatar">
+          <image wx:if="{{assignment.staffInfo.avatarUrl}}" src="{{assignment.staffInfo.avatarUrl}}" mode="aspectFill"></image>
+          <view wx:else class="default-avatar">👩‍⚕️</view>
+        </view>
+        <view class="staff-details">
+          <view class="staff-name">{{assignment.staffInfo.name || '医护人员'}}</view>
+          <view class="submit-time">提交时间: {{assignment.updateTime ? (assignment.updateTime.toLocaleString ? assignment.updateTime.toLocaleString() : assignment.updateTime) : '未知'}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 记录内容 -->
+    <view class="record-card">
+      <view class="card-title">记录内容</view>
+      <view class="record-content">{{assignment.recordContent || '无记录内容'}}</view>
+    </view>
+
+    <!-- 图片展示 -->
+    <view class="image-card" wx:if="{{assignment.fileIDs && assignment.fileIDs.length > 0}}">
+      <view class="card-title">上传图片 ({{assignment.fileIDs.length}}张)</view>
+      <view class="image-grid">
+        <view class="image-item" wx:for="{{assignment.fileIDs}}" wx:key="*this">
+          <image class="preview-image" src="{{item}}" mode="aspectFill" bindtap="previewImage" data-src="{{item}}"></image>
+        </view>
+      </view>
+    </view>
+
+    <!-- 审核表单 -->
+    <view class="review-form" wx:if="{{assignment.status === 'submitted'}}">
+      <view class="form-card">
+        <view class="card-title">审核意见</view>
+        <view class="textarea-container">
+          <textarea 
+            class="comments-textarea" 
+            placeholder="请输入审核意见或退回原因..." 
+            maxlength="{{maxCommentLength}}" 
+            bindinput="onInputComments"
+            value="{{comments}}"
+          ></textarea>
+          <view class="character-count">{{commentCount}}/{{maxCommentLength}}</view>
+        </view>
+        <view class="tip-text">提示: 如果选择退回，请填写退回原因</view>
+      </view>
+
+      <!-- 审核按钮 -->
+      <view class="action-buttons">
+        <button class="reject-btn" bindtap="reviewRecord" data-approved="{{false}}" disabled="{{submitting}}">
+          {{submitting ? '处理中...' : '退回修改'}}
+        </button>
+        <button class="approve-btn" bindtap="reviewRecord" data-approved="{{true}}" disabled="{{submitting}}">
+          {{submitting ? '处理中...' : '通过并发布'}}
+        </button>
+      </view>
+    </view>
+
+    <!-- 历史审核记录 -->
+    <view class="history-card" wx:if="{{assignment.status !== 'submitted' && assignment.comments}}">
+      <view class="card-title">审核记录</view>
+      <view class="history-content">
+        <view class="history-status">
+          状态: 
+          <text class="{{assignment.status === 'approved' || assignment.status === 'completed' ? 'approved-text' : 'rejected-text'}}">
+            {{assignment.status === 'approved' || assignment.status === 'completed' ? '已通过' : '已退回'}}
+          </text>
+        </view>
+        <view class="history-time">审核时间: {{assignment.approvalTime ? (assignment.approvalTime.toLocaleString ? assignment.approvalTime.toLocaleString() : assignment.approvalTime) : '未知'}}</view>
+        <view class="history-comments" wx:if="{{assignment.comments}}">
+          <view class="comments-title">审核意见:</view>
+          <view class="comments-content">{{assignment.comments}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部操作栏 -->
+    <view class="footer">
+      <button class="back-btn" bindtap="goBack">返回</button>
+      <button class="detail-btn" bindtap="viewPetDetail">查看宠物详情</button>
+    </view>
+  </view>
+</view>

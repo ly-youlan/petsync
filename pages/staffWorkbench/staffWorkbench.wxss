@@ -1,0 +1,333 @@
+/* pages/staffWorkbench/staffWorkbench.wxss */
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f9f5f1;
+}
+
+/* 页面标题样式 */
+.header {
+  background: linear-gradient(to right, #D4B59E, #8B5A2B);
+  padding: 20rpx 30rpx;
+  color: #fff;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  padding: 10rpx 0;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: bold;
+  margin-bottom: 4rpx;
+}
+
+.subtitle {
+  font-size: 26rpx;
+  opacity: 0.9;
+}
+
+/* 标签页样式 */
+.tabs {
+  display: flex;
+  background-color: #fff;
+  border-bottom: 1rpx solid #eee;
+  position: relative;
+  z-index: 1;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 20rpx 0;
+  font-size: 28rpx;
+  color: #666;
+  position: relative;
+  transition: all 0.3s;
+}
+
+.tab.active {
+  color: #8B5A2B;
+  font-weight: bold;
+}
+
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 25%;
+  width: 50%;
+  height: 6rpx;
+  background: linear-gradient(to right, #D4B59E, #8B5A2B);
+  border-radius: 3rpx;
+}
+
+/* 加载中样式 */
+.loading-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading {
+  text-align: center;
+}
+
+.loading-icon {
+  display: inline-block;
+  width: 60rpx;
+  height: 60rpx;
+  border: 6rpx solid #D4B59E;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  margin-top: 20rpx;
+  font-size: 28rpx;
+  color: #8B5A2B;
+}
+
+/* 空状态样式 */
+.empty-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40rpx;
+}
+
+.empty-icon {
+  font-size: 80rpx;
+  margin-bottom: 20rpx;
+}
+
+.empty-text {
+  font-size: 32rpx;
+  color: #8B5A2B;
+  margin-bottom: 10rpx;
+  font-weight: bold;
+}
+
+.empty-subtext {
+  font-size: 26rpx;
+  color: #999;
+  margin-bottom: 30rpx;
+  text-align: center;
+}
+
+.empty-tip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60rpx 0;
+}
+
+/* 任务列表样式 */
+.assignment-list {
+  flex: 1;
+  padding: 20rpx;
+}
+
+.assignment-card {
+  background-color: #fff;
+  border-radius: 16rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.pet-info {
+  display: flex;
+  align-items: center;
+}
+
+.pet-avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 20rpx;
+  background-color: #FFF5E6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pet-avatar image {
+  width: 100%;
+  height: 100%;
+}
+
+.default-avatar {
+  font-size: 40rpx;
+  color: #A67C52;
+}
+
+.pet-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.pet-name {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: bold;
+}
+
+.pet-breed {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 4rpx;
+}
+
+.status-badge {
+  font-size: 24rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 20rpx;
+}
+
+.status-badge.assigned {
+  background-color: rgba(250, 173, 20, 0.1);
+  color: #faad14;
+}
+
+.status-badge.rejected {
+  background-color: rgba(255, 77, 79, 0.1);
+  color: #ff4d4f;
+}
+
+.status-badge.submitted {
+  background-color: rgba(24, 144, 255, 0.1);
+  color: #1890ff;
+}
+
+.status-badge.approved {
+  background-color: rgba(82, 196, 26, 0.1);
+  color: #52c41a;
+}
+
+.status-badge.completed {
+  background-color: rgba(144, 147, 153, 0.1);
+  color: #909399;
+}
+
+.card-content {
+  padding: 20rpx;
+}
+
+.assignment-time {
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 10rpx;
+}
+
+.comments {
+  margin-top: 10rpx;
+  background-color: #fff9f0;
+  padding: 16rpx;
+  border-radius: 8rpx;
+  border-left: 4rpx solid #faad14;
+}
+
+.comments-title {
+  font-size: 24rpx;
+  color: #8B5A2B;
+  font-weight: bold;
+  margin-bottom: 6rpx;
+}
+
+.comments-content {
+  font-size: 24rpx;
+  color: #666;
+  line-height: 1.5;
+}
+
+.record-preview {
+  margin-top: 10rpx;
+  background-color: #f9f9f9;
+  padding: 16rpx;
+  border-radius: 8rpx;
+}
+
+.record-text {
+  font-size: 24rpx;
+  color: #666;
+  line-height: 1.5;
+}
+
+.approval-time {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 10rpx;
+}
+
+.card-actions {
+  display: flex;
+  padding: 20rpx;
+  border-top: 1rpx solid #f0f0f0;
+}
+
+.action-btn {
+  flex: 1;
+  margin: 0 10rpx;
+  font-size: 26rpx;
+  padding: 12rpx 0;
+  border-radius: 30rpx;
+}
+
+.view-btn {
+  background-color: #f0f0f0;
+  color: #666;
+}
+
+.submit-btn {
+  background: linear-gradient(to right, #D4B59E, #8B5A2B);
+  color: #fff;
+}
+
+/* 底部操作栏 */
+.footer {
+  padding: 20rpx;
+  background-color: #fff;
+  border-top: 1rpx solid #eee;
+  display: flex;
+}
+
+.refresh-btn, .back-btn {
+  flex: 1;
+  margin: 0 10rpx;
+  font-size: 28rpx;
+  padding: 16rpx 0;
+  border-radius: 40rpx;
+}
+
+.refresh-btn {
+  background-color: #FFF5E6;
+  color: #8B5A2B;
+  border: 1rpx solid #D4B59E;
+}
+
+.back-btn {
+  background-color: #f0f0f0;
+  color: #666;
+}

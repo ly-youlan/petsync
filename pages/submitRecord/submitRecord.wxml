@@ -1,0 +1,97 @@
+<!-- pages/submitRecord/submitRecord.wxml -->
+<view class="container">
+  <!-- 页面标题 -->
+  <view class="header">
+    <view class="header-content">
+      <view class="title">提交记录</view>
+      <view class="subtitle" wx:if="{{assignment}}">{{assignment.petInfo.name}}</view>
+    </view>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="loading-container" wx:if="{{loading}}">
+    <view class="loading">
+      <view class="loading-icon"></view>
+      <view class="loading-text">加载中...</view>
+    </view>
+  </view>
+
+  <!-- 表单内容 -->
+  <view class="form-container" wx:else>
+    <!-- 宠物信息 -->
+    <view class="pet-info-card">
+      <view class="pet-avatar">
+        <image wx:if="{{assignment.petInfo.avatarUrl}}" src="{{assignment.petInfo.avatarUrl}}" mode="aspectFill"></image>
+        <view wx:else class="default-avatar">🐈</view>
+      </view>
+      <view class="pet-details">
+        <view class="pet-name">{{assignment.petInfo.name}}</view>
+        <view class="pet-breed">{{assignment.petInfo.breed || '未知品种'}}</view>
+      </view>
+      <view class="status-badge {{assignment.status}}">
+        {{assignment.status === 'assigned' ? '待处理' : 
+          assignment.status === 'rejected' ? '需修改' : 
+          assignment.status === 'submitted' ? '审核中' : '未知状态'}}
+      </view>
+    </view>
+
+    <!-- 退回原因 -->
+    <view class="rejection-card" wx:if="{{assignment.status === 'rejected' && assignment.comments}}">
+      <view class="card-title">退回原因</view>
+      <view class="rejection-content">{{assignment.comments}}</view>
+    </view>
+
+    <!-- 记录内容 -->
+    <view class="form-card">
+      <view class="card-title">记录内容</view>
+      <view class="textarea-container">
+        <textarea 
+          class="record-textarea" 
+          placeholder="请输入宠物状态记录内容..." 
+          maxlength="{{maxCharacterCount}}" 
+          bindinput="onInputRecord"
+          value="{{recordContent}}"
+        ></textarea>
+        <view class="character-count">{{characterCount}}/{{maxCharacterCount}}</view>
+      </view>
+    </view>
+
+    <!-- 图片上传 -->
+    <view class="form-card">
+      <view class="card-title">上传图片</view>
+      <view class="upload-tip">可上传最多{{maxImageCount}}张图片</view>
+      
+      <!-- 已上传的云端图片 -->
+      <view class="image-list" wx:if="{{fileIDs.length > 0}}">
+        <view class="image-item" wx:for="{{fileIDs}}" wx:key="*this">
+          <image class="preview-image" src="{{item}}" mode="aspectFill" bindtap="previewImage" data-src="{{item}}"></image>
+          <view class="delete-btn" bindtap="deleteImage" data-index="{{index}}" data-type="cloud">×</view>
+        </view>
+      </view>
+      
+      <!-- 新选择的本地图片 -->
+      <view class="image-list" wx:if="{{tempFilePaths.length > 0}}">
+        <view class="image-item" wx:for="{{tempFilePaths}}" wx:key="*this">
+          <image class="preview-image" src="{{item}}" mode="aspectFill" bindtap="previewImage" data-src="{{item}}"></image>
+          <view class="delete-btn" bindtap="deleteImage" data-index="{{index}}" data-type="temp">×</view>
+        </view>
+      </view>
+      
+      <!-- 上传按钮 -->
+      <view class="upload-container" wx:if="{{fileIDs.length + tempFilePaths.length < maxImageCount}}">
+        <view class="upload-btn" bindtap="chooseImage">
+          <view class="upload-icon">+</view>
+          <view class="upload-text">添加图片</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 提交按钮 -->
+    <view class="submit-container">
+      <button class="cancel-btn" bindtap="goBack">取消</button>
+      <button class="submit-btn" bindtap="submitRecord" disabled="{{submitting}}">
+        {{submitting ? '提交中...' : '提交记录'}}
+      </button>
+    </view>
+  </view>
+</view>

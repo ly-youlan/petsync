@@ -1,0 +1,135 @@
+<!-- pages/staffWorkbench/staffWorkbench.wxml -->
+<view class="container">
+  <!-- 页面标题 -->
+  <view class="header">
+    <view class="header-content">
+      <view class="title">医护工作台</view>
+      <view class="subtitle">{{clinicInfo.name || '诊所'}}</view>
+    </view>
+  </view>
+
+  <!-- 标签页切换 -->
+  <view class="tabs">
+    <view class="tab {{activeTab === 'pending' ? 'active' : ''}}" bindtap="switchTab" data-tab="pending">
+      待处理任务
+    </view>
+    <view class="tab {{activeTab === 'completed' ? 'active' : ''}}" bindtap="switchTab" data-tab="completed">
+      历史记录
+    </view>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="loading-container" wx:if="{{loading}}">
+    <view class="loading">
+      <view class="loading-icon"></view>
+      <view class="loading-text">加载中...</view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-container" wx:elif="{{emptyState}}">
+    <view class="empty-icon">📋</view>
+    <view class="empty-text">暂无分配任务</view>
+    <view class="empty-subtext">兽医分配任务后会显示在这里</view>
+    <button class="refresh-btn" bindtap="refreshData">刷新</button>
+  </view>
+
+  <!-- 待处理任务 -->
+  <scroll-view scroll-y class="assignment-list" wx:elif="{{activeTab === 'pending'}}">
+    <view wx:if="{{pendingTasksCount === 0}}" class="empty-tip">
+      <view class="empty-icon">✓</view>
+      <view class="empty-text">暂无待处理任务</view>
+    </view>
+    
+    <view wx:for="{{assignments}}" wx:key="_id" wx:if="{{item.status === 'assigned' || item.status === 'rejected'}}"
+          class="assignment-card">
+      <view class="card-header">
+        <view class="pet-info">
+          <view class="pet-avatar">
+            <image wx:if="{{item.petInfo.avatarUrl}}" src="{{item.petInfo.avatarUrl}}" mode="aspectFill"></image>
+            <view wx:else class="default-avatar">🐈</view>
+          </view>
+          <view class="pet-details">
+            <view class="pet-name">{{item.petInfo.name}}</view>
+            <view class="pet-breed">{{item.petInfo.breed || '未知品种'}}</view>
+          </view>
+        </view>
+        <view class="status-badge {{item.status}}">
+          {{item.status === 'assigned' ? '待处理' : '需修改'}}
+        </view>
+      </view>
+      
+      <view class="card-content">
+        <view class="assignment-time">
+          分配时间: {{item.createTime ? (item.createTime.toLocaleString ? item.createTime.toLocaleString() : item.createTime) : '未知'}}
+        </view>
+        
+        <view class="comments" wx:if="{{item.status === 'rejected' && item.comments}}">
+          <view class="comments-title">退回原因:</view>
+          <view class="comments-content">{{item.comments}}</view>
+        </view>
+      </view>
+      
+      <view class="card-actions">
+        <button class="action-btn view-btn" bindtap="viewPetDetail" data-petid="{{item.petId}}">查看详情</button>
+        <button class="action-btn submit-btn" bindtap="submitRecord" data-assignment="{{item}}">
+          {{item.status === 'assigned' ? '提交记录' : '重新提交'}}
+        </button>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 历史记录 -->
+  <scroll-view scroll-y class="assignment-list" wx:elif="{{activeTab === 'completed'}}">
+    <view wx:if="{{historyTasksCount === 0}}" class="empty-tip">
+      <view class="empty-icon">📜</view>
+      <view class="empty-text">暂无历史记录</view>
+    </view>
+    
+    <view wx:for="{{assignments}}" wx:key="_id" wx:if="{{item.status === 'submitted' || item.status === 'approved' || item.status === 'completed'}}"
+          class="assignment-card">
+      <view class="card-header">
+        <view class="pet-info">
+          <view class="pet-avatar">
+            <image wx:if="{{item.petInfo.avatarUrl}}" src="{{item.petInfo.avatarUrl}}" mode="aspectFill"></image>
+            <view wx:else class="default-avatar">🐈</view>
+          </view>
+          <view class="pet-details">
+            <view class="pet-name">{{item.petInfo.name}}</view>
+            <view class="pet-breed">{{item.petInfo.breed || '未知品种'}}</view>
+          </view>
+        </view>
+        <view class="status-badge {{item.status}}">
+          {{item.status === 'submitted' ? '审核中' : 
+            item.status === 'approved' ? '已通过' : 
+            item.status === 'completed' ? '已完成' : '未知状态'}}
+        </view>
+      </view>
+      
+      <view class="card-content">
+        <view class="assignment-time">
+          提交时间: {{item.updateTime ? (item.updateTime.toLocaleString ? item.updateTime.toLocaleString() : item.updateTime) : '未知'}}
+        </view>
+        
+        <view class="record-preview" wx:if="{{item.recordContent}}">
+          <text class="record-text">{{item.recordContent.length > 50 ? item.recordContent.substring(0, 50) + '...' : item.recordContent}}</text>
+        </view>
+        
+        <view class="approval-time" wx:if="{{item.approvalTime}}">
+          审核时间: {{item.approvalTime ? (item.approvalTime.toLocaleString ? item.approvalTime.toLocaleString() : item.approvalTime) : '未知'}}
+        </view>
+      </view>
+      
+      <view class="card-actions">
+        <button class="action-btn view-btn" bindtap="viewPetDetail" data-petid="{{item.petId}}">查看详情</button>
+        <button class="action-btn submit-btn" wx:if="{{item.status === 'submitted'}}" bindtap="submitRecord" data-assignment="{{item}}">修改记录</button>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 底部操作栏 -->
+  <view class="footer">
+    <button class="refresh-btn" bindtap="refreshData">刷新</button>
+    <button class="back-btn" bindtap="goBack">返回</button>
+  </view>
+</view>

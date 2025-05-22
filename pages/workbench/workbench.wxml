@@ -42,12 +42,31 @@
       </view>
     </view>
     
-    <!-- 创建新宠物记录按钮 -->
-    <view class="create-btn" bindtap="goToCreatePetRecord">
-      <view class="custom-icon add-icon">
-        <text>+</text>
+    <!-- 功能按钮区域 -->
+    <view class="action-buttons">
+      <!-- 创建新宠物记录按钮 -->
+      <view class="create-btn" bindtap="goToCreatePetRecord">
+        <view class="custom-icon add-icon">
+          <text>+</text>
+        </view>
+        <text>创建新宠物记录</text>
       </view>
-      <text>创建新宠物记录</text>
+      
+      <!-- 医护管理按钮 -->
+      <view class="staff-btn" bindtap="goToStaffManagement">
+        <view class="custom-icon staff-icon">
+          <text>👥</text>
+        </view>
+        <text>医护管理</text>
+      </view>
+    </view>
+    
+    <!-- 测试工具按钮 -->
+    <view class="test-tools-btn" bindtap="goToTestTools">
+      <view class="custom-icon tools-icon">
+        <text>🔧</text>
+      </view>
+      <text>测试工具</text>
     </view>
     
     <!-- 宠物记录列表 -->

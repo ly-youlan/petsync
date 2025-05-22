@@ -414,8 +414,22 @@ Page({
   // 跳转到创建宠物记录页
   goToCreatePetRecord: function() {
     wx.navigateTo({
-      url: '/pages/createPetRecord/createPetRecord',
-    })
+      url: '/pages/createPetRecord/createPetRecord'
+    });
+  },
+  
+  // 跳转到医护管理页面
+  goToStaffManagement: function() {
+    wx.navigateTo({
+      url: '/pages/staffManagement/staffManagement'
+    });
+  },
+  
+  // 跳转到测试工具页面
+  goToTestTools: function() {
+    wx.navigateTo({
+      url: '/pages/testTools/testTools'
+    });
   },
   
   // 跳转到设置页面

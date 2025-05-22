@@ -1,0 +1,14 @@
+{
+  "name": "managePetAssignments",
+  "version": "1.0.0",
+  "description": "管理宠物分配和医护记录审批",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

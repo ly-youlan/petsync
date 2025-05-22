@@ -32,6 +32,8 @@ exports.main = async (event, context) => {
         return await updateUser(userData, wxContext)
       case 'approveVet':
         return await approveVet(userData.targetOpenid || wxContext.OPENID)
+      case 'approveStaff':
+        return await approveStaff(userData.targetOpenid || wxContext.OPENID)
       case 'getClinicByCode':
         return await getClinicByCode(event.clinicCode)
       case 'getUserByRoleAndOpenid':
@@ -66,8 +68,8 @@ async function createUser(userData, wxContext) {
     }
   }
   
-  // 如果是兵医用户，验证诊所邀请码
-  if (userData.userRole === 'vet' && userData.hospitalId) {
+  // 如果是兽医或医护人员，验证诊所邀请码
+  if ((userData.userRole === 'vet' || userData.userRole === 'staff') && userData.hospitalId) {
     try {
       // 查询诊所集合
       const clinicsCollection = db.collection('clinics')
@@ -294,6 +296,40 @@ async function approveVet(openid) {
   const result = await userCollection.where({
     openid: openid,
     userRole: 'vet'
+  }).update({
+    data: {
+      isApproved: true,
+      approvalStatus: 'approved',
+      approvalTime: db.serverDate(),
+      updateTime: db.serverDate()
+    }
+  })
+  
+  return {
+    success: true,
+    updated: result.stats.updated
+  }
+}
+
+// 审核医护人员
+async function approveStaff(openid) {
+  // 检查用户是否存在
+  const existingUser = await userCollection.where({
+    openid: openid,
+    userRole: 'staff'
+  }).get()
+  
+  if (existingUser.data.length === 0) {
+    return {
+      success: false,
+      errMsg: '医护人员用户不存在'
+    }
+  }
+  
+  // 更新审核状态
+  const result = await userCollection.where({
+    openid: openid,
+    userRole: 'staff'
   }).update({
     data: {
       isApproved: true,

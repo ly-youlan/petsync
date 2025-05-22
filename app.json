@@ -7,7 +7,12 @@
     "pages/petList/petList",
     "pages/petDetail/petDetail",
     "pages/createPetRecord/createPetRecord",
-    "pages/addRecord/addRecord"
+    "pages/addRecord/addRecord",
+    "pages/staffManagement/staffManagement",
+    "pages/staffWorkbench/staffWorkbench",
+    "pages/submitRecord/submitRecord",
+    "pages/recordReview/recordReview",
+    "pages/testTools/testTools"
   ],
   "window": {
     "backgroundTextStyle": "light",

@@ -1,0 +1,37 @@
+<!-- pages/testTools/testTools.wxml -->
+<view class="container">
+  <!-- 页面标题 -->
+  <view class="header">
+    <view class="header-content">
+      <view class="title">开发测试工具</view>
+      <view class="subtitle">用于创建必要的数据库集合和测试账号</view>
+    </view>
+  </view>
+
+  <!-- 工具按钮 -->
+  <view class="tools-container">
+    <view class="tool-card">
+      <view class="card-title">数据库工具</view>
+      <view class="card-description">创建必要的数据库集合，解决"collection not exists"错误</view>
+      <button class="tool-btn" bindtap="createCollection" disabled="{{loading}}">创建petAssignments集合</button>
+    </view>
+
+    <view class="tool-card">
+      <view class="card-title">测试账号工具</view>
+      <view class="card-description">创建一个测试医护人员账号，用于测试医护功能</view>
+      <button class="tool-btn" bindtap="createTestStaff" disabled="{{loading}}">创建测试医护人员</button>
+      <button class="tool-btn login-btn" bindtap="loginAsTestStaff" disabled="{{loading || !testStaffInfo}}">以测试医护身份登录</button>
+    </view>
+
+    <!-- 结果显示 -->
+    <view class="result-card" wx:if="{{results}}">
+      <view class="card-title">操作结果</view>
+      <view class="result-content">{{results}}</view>
+    </view>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="footer">
+    <button class="back-btn" bindtap="goBack">返回工作台</button>
+  </view>
+</view>

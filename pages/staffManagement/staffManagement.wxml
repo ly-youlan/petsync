@@ -1,0 +1,134 @@
+<!-- pages/staffManagement/staffManagement.wxml -->
+<view class="container">
+  <!-- 页面标题 -->
+  <view class="header">
+    <view class="header-content">
+      <view class="title">医护管理</view>
+      <view class="subtitle">{{clinicInfo.name || '诊所'}}</view>
+    </view>
+  </view>
+
+  <!-- 标签页切换 -->
+  <view class="tabs">
+    <view class="tab {{activeTab === 'assign' ? 'active' : ''}}" bindtap="switchTab" data-tab="assign">
+      分配任务
+    </view>
+    <view class="tab {{activeTab === 'review' ? 'active' : ''}} {{pendingReviews > 0 ? 'has-badge' : ''}}" bindtap="switchTab" data-tab="review">
+      审核记录
+      <view wx:if="{{pendingReviews > 0}}" class="badge">{{pendingReviews}}</view>
+    </view>
+  </view>
+
+  <!-- 分配任务面板 -->
+  <view class="panel" wx:if="{{activeTab === 'assign'}}">
+    <!-- 宠物列表 -->
+    <view class="section">
+      <view class="section-title">选择宠物</view>
+      <scroll-view scroll-y class="pet-list">
+        <view wx:if="{{petRecords.length === 0}}" class="empty-tip">暂无宠物记录</view>
+        <view wx:for="{{petRecords}}" wx:key="_id" 
+              class="pet-item {{selectedPetId === item._id ? 'selected' : ''}}" 
+              bindtap="selectPet" data-id="{{item._id}}">
+          <view class="pet-avatar">
+            <image wx:if="{{item.petInfo.avatarUrl}}" src="{{item.petInfo.avatarUrl}}" mode="aspectFill"></image>
+            <view wx:else class="default-avatar">🐈</view>
+          </view>
+          <view class="pet-info">
+            <view class="pet-name">{{item.petInfo.name}}</view>
+            <view class="pet-breed">{{item.petInfo.breed || '未知品种'}}</view>
+            <view class="pet-owner">主人: {{item.ownerInfo.name || '未知'}} ({{item.ownerInfo.phoneNumber}})</view>
+          </view>
+          <view class="pet-status" wx:if="{{item.assignedToStaff}}">已分配</view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 医护人员列表 -->
+    <view class="section">
+      <view class="section-title">选择医护人员</view>
+      <scroll-view scroll-y class="staff-list">
+        <view wx:if="{{staffList.length === 0}}" class="empty-tip">暂无医护人员</view>
+        <view wx:for="{{staffList}}" wx:key="openid" 
+              class="staff-item {{selectedStaffId === item.openid ? 'selected' : ''}}" 
+              bindtap="selectStaff" data-id="{{item.openid}}">
+          <view class="staff-avatar">
+            <image wx:if="{{item.avatarUrl}}" src="{{item.avatarUrl}}" mode="aspectFill"></image>
+            <view wx:else class="default-avatar">👩‍⚕️</view>
+          </view>
+          <view class="staff-info">
+            <view class="staff-name">{{item.name}}</view>
+            <view class="staff-phone">{{item.phoneNumber || '无电话'}}</view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 分配按钮 -->
+    <view class="action-section">
+      <button class="assign-btn" bindtap="assignPet" disabled="{{!selectedPetId || !selectedStaffId}}">分配任务</button>
+    </view>
+  </view>
+
+  <!-- 审核记录面板 -->
+  <view class="panel" wx:if="{{activeTab === 'review'}}">
+    <view class="section">
+      <view class="section-title">待审核记录</view>
+      <scroll-view scroll-y class="assignment-list">
+        <view wx:if="{{pendingReviews === 0}}" class="empty-tip">暂无待审核记录</view>
+        <view wx:for="{{assignments}}" wx:key="_id" wx:if="{{item.status === 'submitted'}}"
+              class="assignment-item" bindtap="reviewRecord" data-assignment="{{item}}">
+          <view class="assignment-header">
+            <view class="pet-avatar">
+              <image wx:if="{{item.petInfo.avatarUrl}}" src="{{item.petInfo.avatarUrl}}" mode="aspectFill"></image>
+              <view wx:else class="default-avatar">🐈</view>
+            </view>
+            <view class="assignment-info">
+              <view class="pet-name">{{item.petInfo.name}}</view>
+              <view class="pet-breed">{{item.petInfo.breed || '未知品种'}}</view>
+            </view>
+            <view class="status-badge submitted">待审核</view>
+          </view>
+          <view class="assignment-content">
+            <view class="staff-info">医护: {{item.staffInfo.name}}</view>
+            <view class="submit-time">提交时间: {{item.updateTime ? (item.updateTime.toLocaleString ? item.updateTime.toLocaleString() : item.updateTime) : '未知'}}</view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <view class="section">
+      <view class="section-title">历史记录</view>
+      <scroll-view scroll-y class="assignment-list">
+        <view wx:if="{{historyRecords === 0}}" class="empty-tip">暂无历史记录</view>
+        <view wx:for="{{assignments}}" wx:key="_id" wx:if="{{item.status !== 'submitted'}}"
+              class="assignment-item" bindtap="reviewRecord" data-assignment="{{item}}">
+          <view class="assignment-header">
+            <view class="pet-avatar">
+              <image wx:if="{{item.petInfo.avatarUrl}}" src="{{item.petInfo.avatarUrl}}" mode="aspectFill"></image>
+              <view wx:else class="default-avatar">🐈</view>
+            </view>
+            <view class="assignment-info">
+              <view class="pet-name">{{item.petInfo.name}}</view>
+              <view class="pet-breed">{{item.petInfo.breed || '未知品种'}}</view>
+            </view>
+            <view class="status-badge {{item.status}}">
+              {{item.status === 'assigned' ? '已分配' : 
+                item.status === 'approved' ? '已通过' : 
+                item.status === 'rejected' ? '已退回' : 
+                item.status === 'completed' ? '已完成' : '未知状态'}}
+            </view>
+          </view>
+          <view class="assignment-content">
+            <view class="staff-info">医护: {{item.staffInfo.name}}</view>
+            <view class="submit-time">更新时间: {{item.updateTime ? (item.updateTime.toLocaleString ? item.updateTime.toLocaleString() : item.updateTime) : '未知'}}</view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="footer">
+    <button class="back-btn" bindtap="goBack">返回工作台</button>
+  </view>
+</view>
